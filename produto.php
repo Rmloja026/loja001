@@ -815,6 +815,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <h1 class="produto-titulo pdp-px-16" id="produtoTitulo"><?php echo htmlspecialchars($nomeproduto); ?></h1>
       </div>
 
+      <!-- DEBUG INFO: OFERTA VALUE [<?php echo htmlspecialchars((string)$oferta); ?>] LIMIT_FIXED_VERSION -->
       <div class="preco-section pdp-px-16">
         <?php if(trim((string)$oferta) === '1' || $oferta == 1): ?>
           <div class="oferta-relampago-container" style="background: #fffcf5; border-radius: 8px; overflow: hidden; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #fce205;">
