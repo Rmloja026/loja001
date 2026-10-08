@@ -107,19 +107,16 @@ require_once("api/facebook_pixel.php");
 
         // Registrar clique no produto: evitar bots, checar sessão, cookie e IP (1 por IP)
         $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-        $is_bot = preg_match('/bot|crawl|spider|slurp|facebook|google|bing|yandex/i', $user_agent);
+        $is_bot = preg_match('/bot|crawl|spider|slurp|facebook|google|bing|yandex|duckduckgo/i', $user_agent);
         $cookie_name = 'product_click_' . $id;
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-        
-        // Criar tabela de controle de IPs se não existir
-        @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS `produto_clicks_ip` ( `id` int(11) NOT NULL AUTO_INCREMENT, `produto_id` int(11) NOT NULL, `ip` varchar(50) NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `prod_ip` (`produto_id`,`ip`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+        $ip = get_real_ip();
         
         if (!$is_bot && !isset($_SESSION[$cookie_name]) && !isset($_COOKIE[$cookie_name])) {
             // Verificar se o IP já clicou neste produto
-            $q_ip = mysqli_query($conn, "SELECT id FROM produto_clicks_ip WHERE produto_id='$pid' AND ip='$ip'");
+            $q_ip = mysqli_query($conn, "SELECT id FROM produto_cliques_ips WHERE produto_id='$pid' AND ip='$ip'");
             if($q_ip && mysqli_num_rows($q_ip) == 0){
                 // Registra o IP para este produto
-                mysqli_query($conn, "INSERT INTO produto_clicks_ip (produto_id, ip) VALUES ('$pid', '$ip')");
+                mysqli_query($conn, "INSERT INTO produto_cliques_ips (produto_id, ip) VALUES ('$pid', '$ip')");
                 
                 $novoclick = $cliques + 1;
                 mysqli_query($conn, "UPDATE produto SET cliques='$novoclick' WHERE id='$pid'");

@@ -68,5 +68,19 @@ addColumn($conn, 'produto', 'status', "VARCHAR(50) DEFAULT 'ativo'");
 // Atualizações da tabela config
 addColumn($conn, 'config', 'cor_botao', "VARCHAR(20) DEFAULT '#3483fa' AFTER cor");
 
+// Criar tabela produto_cliques_ips para cliques únicos
+$sql_create_clicks = "CREATE TABLE IF NOT EXISTS `produto_cliques_ips` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `produto_id` int(11) NOT NULL,
+  `ip` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `prod_ip` (`produto_id`,`ip`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+if(mysqli_query($conn, $sql_create_clicks)) {
+    echo "<p class='success'>✅ Tabela 'produto_cliques_ips' criada com sucesso!</p>";
+} else {
+    echo "<p style='color:red;'>❌ Erro ao criar tabela 'produto_cliques_ips': " . mysqli_error($conn) . "</p>";
+}
+
 echo "<h3>✅ Atualização concluída! Pode fechar esta tela.</h3></div></body></html>";
 ?>
