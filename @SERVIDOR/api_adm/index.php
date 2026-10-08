@@ -1133,6 +1133,8 @@ switch($acao){
 							`caracteristicas`='$CARACTERISTICAS', 
 							`reviews`='$REVIEWS', 
 							`tipo_produto`='$TIPO_PRODUTO', 
+							`variacoes`='$VARIACOES',
+							`status`='$STATUS',
 							`pix_copia_e_cola`='$PIX_PRODUTO' 
 							WHERE `id`='$id'";
 					if(mysqli_query($conn, $sql_simple)){

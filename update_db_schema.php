@@ -29,5 +29,27 @@ if(mysqli_num_rows($result_rel) == 0){
     echo "Coluna 'produtos_relacionados' já existe.<br>";
 }
 
+$queries = [
+    "ALTER TABLE `pix` ADD COLUMN `bravopay_api_key` VARCHAR(255) DEFAULT ''",
+    "ALTER TABLE `pix` ADD COLUMN `bravopay_webhook_secret` VARCHAR(255) DEFAULT ''",
+    "ALTER TABLE `pix` ADD COLUMN `use_bravopay` TINYINT(1) DEFAULT 0",
+    "ALTER TABLE `produto` ADD COLUMN `valor_original` VARCHAR(100) DEFAULT ''",
+    "ALTER TABLE `produto` ADD COLUMN `variacoes` LONGTEXT DEFAULT NULL",
+    "ALTER TABLE `produto` ADD COLUMN `force_tabela_pix` TINYINT(1) DEFAULT 0",
+    "ALTER TABLE `produto` ADD COLUMN `status` VARCHAR(50) DEFAULT 'ativo'"
+];
+
+foreach ($queries as $q) {
+    if (mysqli_query($conn, $q)) {
+        echo "Sucesso: $q <br>";
+    } else {
+        $err = mysqli_error($conn);
+        if (strpos($err, 'Duplicate column') === false) {
+            echo "Erro: $err em $q <br>";
+        }
+    }
+}
+
+
 echo "Finalizado.";
 ?>

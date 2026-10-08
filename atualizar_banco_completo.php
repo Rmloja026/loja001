@@ -52,10 +52,18 @@ addColumn($conn, 'pix', 'carthero_private_key', "TEXT DEFAULT NULL");
 addColumn($conn, 'pix', 'carthero_public_key', "TEXT DEFAULT NULL");
 addColumn($conn, 'pix', 'use_carthero', "TINYINT(1) DEFAULT 0");
 addColumn($conn, 'pix', 'use_pix_produto', "TINYINT(1) NOT NULL DEFAULT 1");
+addColumn($conn, 'pix', 'bravopay_api_key', "VARCHAR(255) DEFAULT ''");
+addColumn($conn, 'pix', 'bravopay_webhook_secret', "VARCHAR(255) DEFAULT ''");
+addColumn($conn, 'pix', 'use_bravopay', "TINYINT(1) DEFAULT 0");
 
 // Atualizações da tabela produto
 addColumn($conn, 'produto', 'ordem', "INT(11) NOT NULL DEFAULT 999");
 addColumn($conn, 'produto', 'categoria', "VARCHAR(100) DEFAULT 'Geral'");
+addColumn($conn, 'produto', 'produtos_relacionados', "VARCHAR(255) DEFAULT ''");
+addColumn($conn, 'produto', 'valor_original', "VARCHAR(100) DEFAULT ''");
+addColumn($conn, 'produto', 'variacoes', "LONGTEXT DEFAULT NULL");
+addColumn($conn, 'produto', 'force_tabela_pix', "TINYINT(1) DEFAULT 0");
+addColumn($conn, 'produto', 'status', "VARCHAR(50) DEFAULT 'ativo'");
 
 // Atualizações da tabela config
 addColumn($conn, 'config', 'cor_botao', "VARCHAR(20) DEFAULT '#3483fa' AFTER cor");
