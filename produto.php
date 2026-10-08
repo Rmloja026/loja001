@@ -38,14 +38,7 @@ require_once("api/facebook_pixel.php");
         $_SESSION['session_index'] = time() + 1000;
         $_SESSION['inside_site'] = true; // Marca que o cliente ja acessou algum produto real
         
-        // Registrar clique real unico
-        if (!isset($_SESSION['clicked_products'])) {
-            $_SESSION['clicked_products'] = [];
-        }
-        if (!in_array($id, $_SESSION['clicked_products'])) {
-            $_SESSION['clicked_products'][] = $id;
-            @mysqli_query($conn, "UPDATE produto SET cliques = COALESCE(cliques, 0) + 1 WHERE codigo = '$id'");
-        }
+        // O registro de clique real único por IP foi movido para baixo, onde checamos bots e cookies.
         
 		$sql = mysqli_query($conn, "SELECT * from config");
 		$cor = "#3483fa";
@@ -112,16 +105,31 @@ require_once("api/facebook_pixel.php");
             $cliques = $row1['cliques'];	
         }
 
-        // Registrar clique no produto (evitar bots e duplicidade via session e cookie)
+        // Registrar clique no produto: evitar bots, checar sessão, cookie e IP (1 por IP)
         $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-        $is_bot = preg_match('/bot|crawl|spider|slurp|facebook|google/i', $user_agent);
+        $is_bot = preg_match('/bot|crawl|spider|slurp|facebook|google|bing|yandex/i', $user_agent);
         $cookie_name = 'product_click_' . $id;
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        
+        // Criar tabela de controle de IPs se não existir
+        @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS `produto_clicks_ip` ( `id` int(11) NOT NULL AUTO_INCREMENT, `produto_id` int(11) NOT NULL, `ip` varchar(50) NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `prod_ip` (`produto_id`,`ip`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
         
         if (!$is_bot && !isset($_SESSION[$cookie_name]) && !isset($_COOKIE[$cookie_name])) {
-            $novoclick = $cliques + 1;
-            mysqli_query($conn, "UPDATE produto SET cliques='$novoclick' WHERE id='$pid'");
-            $_SESSION[$cookie_name] = true;
-            setcookie($cookie_name, '1', time() + 86400 * 7, '/'); // Cookie válido por 7 dias
+            // Verificar se o IP já clicou neste produto
+            $q_ip = mysqli_query($conn, "SELECT id FROM produto_clicks_ip WHERE produto_id='$pid' AND ip='$ip'");
+            if($q_ip && mysqli_num_rows($q_ip) == 0){
+                // Registra o IP para este produto
+                mysqli_query($conn, "INSERT INTO produto_clicks_ip (produto_id, ip) VALUES ('$pid', '$ip')");
+                
+                $novoclick = $cliques + 1;
+                mysqli_query($conn, "UPDATE produto SET cliques='$novoclick' WHERE id='$pid'");
+                $_SESSION[$cookie_name] = true;
+                setcookie($cookie_name, '1', time() + 86400 * 7, '/'); // Cookie válido por 7 dias
+            } else {
+                // IP já clicou antes, não contar novamente, apenas definir o cookie para não checar banco de novo
+                $_SESSION[$cookie_name] = true;
+                setcookie($cookie_name, '1', time() + 86400 * 7, '/');
+            }
         }
         
 	        $valor_total = (float)str_replace(',', '.', str_replace('.', '', $valor));
