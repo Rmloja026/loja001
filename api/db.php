@@ -7,10 +7,10 @@
 
 // CONFIGURAÇÃO DO BANCO DE DADOS
 class db {
-    public static $db_server = "mysql.railway.internal"; // Railway Internal Host
-    public static $db_db     = "railway";   // Railway Database
-    public static $db_user   = "root";      // Railway User
-    public static $db_pass   = "ejjzvUCnIaBJxbWfckUdoAaHVpBmSbRJ";          // Railway Password
+    public static $db_server = "localhost"; 
+    public static $db_db     = "sql_mercadoseguroblak_com";   
+    public static $db_user   = "sql_mercadoseguroblak_com";      
+    public static $db_pass   = "bd42d42dfe383";          
 }
 
 // Sobrescreve com as variáveis de ambiente (Ex: Railway, Heroku, Docker)
