@@ -816,24 +816,75 @@ document.addEventListener("DOMContentLoaded", function() {
       </div>
 
       <div class="preco-section pdp-px-16">
-        <?php if($valor_original > $valor_total): ?>
-        <div class="preco-original-linha" style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
-          <?php if($desconto_num > 0): ?>
-          <span class="preco-desconto" style="background: #00a650; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 600;"><?php echo str_replace('%', '', $desconto); ?>% OFF</span>
-          <?php endif; ?>
-          <s class="preco-original" style="color: #999; font-size: 14px;">R$ <?php echo number_format($valor_original, 2, ',', '.'); ?></s>
-        </div>
-        <?php endif; ?>
-        
-        <?php $vt_parts = explode(',', number_format($valor_total, 2, ',', '.')); ?>
-        <div class="preco-atual-row" style="display: flex; align-items: baseline; gap: 8px;">
-          <div style="display: flex; align-items: flex-start;">
-            <span class="preco-simbolo" style="font-size: 20px; font-weight: 400;">R$</span>
-            <span class="preco-valor" style="font-size: 36px; font-weight: 400; line-height: 1;"><?php echo $vt_parts[0]; ?></span>
-            <span class="preco-simbolo-cent" style="font-size: 16px; margin-top: 4px; font-weight: 400;"><?php echo $vt_parts[1]; ?></span>
+        <?php if($oferta == '1'): ?>
+          <div class="oferta-relampago-container" style="background: #fffcf5; border-radius: 8px; overflow: hidden; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #fce205;">
+              <div style="background-color: #ffcc00; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;">
+                  <div style="font-weight: 800; font-style: italic; color: #333; font-size: 14px;">OFERTA RELÂMPAGO</div>
+                  <div style="color: #333; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 8px;">
+                      Termina em 
+                      <div style="display: flex; gap: 3px; font-weight: bold;">
+                          <span id="relampago-h" style="background: white; padding: 2px 4px; border-radius: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">--</span> :
+                          <span id="relampago-m" style="background: white; padding: 2px 4px; border-radius: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">--</span> :
+                          <span id="relampago-s" style="background: white; padding: 2px 4px; border-radius: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">--</span>
+                      </div>
+                  </div>
+              </div>
+              <div style="padding: 15px;">
+                  <?php if($valor_original > $valor_total): ?>
+                  <div style="margin-bottom: 5px;">
+                      <s style="color: #999; font-size: 16px;">R$ <?php echo number_format($valor_original, 2, ',', '.'); ?></s>
+                  </div>
+                  <?php endif; ?>
+                  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                      <?php $vt_parts = explode(',', number_format($valor_total, 2, ',', '.')); ?>
+                      <div style="display: flex; align-items: flex-start; color: #333;">
+                          <span style="font-size: 24px; font-weight: 500; margin-right: 4px;">R$</span>
+                          <span style="font-size: 42px; font-weight: 500; line-height: 1;"><?php echo $vt_parts[0]; ?></span>
+                      </div>
+                      <?php if($desconto_num > 0): ?>
+                      <span style="background: #ffe600; color: #333; padding: 4px 8px; border-radius: 4px; font-size: 16px; font-weight: 700;"><?php echo str_replace('%', '', $desconto); ?>% OFF</span>
+                      <?php endif; ?>
+                  </div>
+                  <div style="color: #333; font-size: 16px; font-weight: 500; margin-top: 5px;">
+                      Últimas 10 unidades!
+                  </div>
+              </div>
           </div>
-          <span class="preco-no-pix" style="color: #00a650; font-size: 14px; font-weight: 500;">no Pix <i class="fa-solid fa-chevron-right" style="font-size: 10px; margin-left: 2px;"></i></span>
-        </div>
+          <script>
+            function updateRelampagoTimer() {
+                const now = new Date().getTime();
+                const cycle = 12 * 60 * 60 * 1000;
+                const timeRemaining = cycle - (now % cycle);
+                const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                document.getElementById('relampago-h').innerText = hours.toString().padStart(2, '0');
+                document.getElementById('relampago-m').innerText = minutes.toString().padStart(2, '0');
+                document.getElementById('relampago-s').innerText = seconds.toString().padStart(2, '0');
+            }
+            setInterval(updateRelampagoTimer, 1000);
+            updateRelampagoTimer();
+          </script>
+        <?php else: ?>
+          <?php if($valor_original > $valor_total): ?>
+          <div class="preco-original-linha" style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+            <?php if($desconto_num > 0): ?>
+            <span class="preco-desconto" style="background: #00a650; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 600;"><?php echo str_replace('%', '', $desconto); ?>% OFF</span>
+            <?php endif; ?>
+            <s class="preco-original" style="color: #999; font-size: 14px;">R$ <?php echo number_format($valor_original, 2, ',', '.'); ?></s>
+          </div>
+          <?php endif; ?>
+          
+          <?php $vt_parts = explode(',', number_format($valor_total, 2, ',', '.')); ?>
+          <div class="preco-atual-row" style="display: flex; align-items: baseline; gap: 8px;">
+            <div style="display: flex; align-items: flex-start;">
+              <span class="preco-simbolo" style="font-size: 20px; font-weight: 400;">R$</span>
+              <span class="preco-valor" style="font-size: 36px; font-weight: 400; line-height: 1;"><?php echo $vt_parts[0]; ?></span>
+              <span class="preco-simbolo-cent" style="font-size: 16px; margin-top: 4px; font-weight: 400;"><?php echo $vt_parts[1]; ?></span>
+            </div>
+            <span class="preco-no-pix" style="color: #00a650; font-size: 14px; font-weight: 500;">no Pix <i class="fa-solid fa-chevron-right" style="font-size: 10px; margin-left: 2px;"></i></span>
+          </div>
+        <?php endif; ?>
         
         <div class="parcelamento" style="color: #333; font-size: 14px; margin-top: 5px;">
           ou R$ <?php echo number_format($valor_original > 0 ? $valor_original : $valor_total * 1.15, 2, ',', '.'); ?> em <span style="color: #00a650;">10x R$ <?php echo number_format(($valor_original > 0 ? $valor_original : $valor_total * 1.15) / 10, 2, ',', '.'); ?> sem juros</span>
