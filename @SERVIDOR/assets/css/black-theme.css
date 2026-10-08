@@ -1766,6 +1766,7 @@ table.table {
 .btn-outline-primary, .btn-outline-info, .btn-outline-success {
     background: rgba(255,255,255,0.02) !important;
     backdrop-filter: blur(5px);
+    color: var(--text-primary) !important;
 }
 
 .btn-outline-primary:hover { border-color: var(--accent-primary) !important; background: rgba(99, 102, 241, 0.15) !important; box-shadow: 0 0 15px rgba(99, 102, 241, 0.4) !important; }
