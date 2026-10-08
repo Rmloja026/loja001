@@ -816,7 +816,7 @@ document.addEventListener("DOMContentLoaded", function() {
       </div>
 
       <div class="preco-section pdp-px-16">
-        <?php if($oferta == '1'): ?>
+        <?php if(trim((string)$oferta) === '1' || $oferta == 1): ?>
           <div class="oferta-relampago-container" style="background: #fffcf5; border-radius: 8px; overflow: hidden; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #fce205;">
               <div style="background-color: #ffcc00; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;">
                   <div style="font-weight: 800; font-style: italic; color: #333; font-size: 14px;">OFERTA RELÂMPAGO</div>

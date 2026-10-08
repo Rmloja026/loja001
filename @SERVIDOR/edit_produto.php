@@ -313,7 +313,7 @@ $v_data = json_decode($prod['variacoes'] ?? '{}', true) ?: [];
 	              </div>
 	              <div class="col-md-3">
 	                <div class="form-check form-switch ps-0 ms-auto my-auto mt-4">
-	                  <input class="form-check-input mt-1 ms-auto" type="checkbox" id="oferta_check" <?php echo ($prod['oferta'] == '1' ? 'checked' : ''); ?> onchange="verificarCheckBox()">
+	                  <input class="form-check-input mt-1 ms-auto" type="checkbox" id="oferta_check" <?php echo ((trim((string)($prod['oferta'] ?? '')) === '1' || ($prod['oferta'] ?? 0) == 1) ? 'checked' : ''); ?> onchange="verificarCheckBox()">
 	                  <label class="form-check-label ms-3" for="oferta_check">Oferta Relâmpago</label>
 	                </div>
 	              </div>
