@@ -127,9 +127,9 @@ img {
    ============================================ */
 .sidenav {
   width: var(--sidebar-width);
-  height: 100vh;
+  height: calc(100vh - 32px); /* Fix clipping by accounting for margin */
   position: fixed;
-  top: 0;
+  top: 16px; /* Align with my-3 margin */
   left: 0;
   z-index: 1050;
   background: var(--bg-secondary);
@@ -1866,4 +1866,13 @@ option {
 
 select.form-control:focus option {
     background-color: #1a2035 !important;
+}
+
+/* 11. Override Bootstrap text-dark class for Dark Theme */
+.text-dark {
+    color: var(--text-primary) !important;
+}
+
+a.text-dark:hover {
+    color: var(--text-secondary) !important;
 }
