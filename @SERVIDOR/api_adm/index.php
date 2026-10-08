@@ -1053,8 +1053,9 @@ switch($acao){
 			$CARACTERISTICAS = addslashes($_POST["caracteristicas"]);
 			$REVIEWS = mysqli_real_escape_string($conn, $_POST["reviews"]);
 			$VALOR = addslashes($_POST["valor"]);
-			$VALOR_ORIGINAL = addslashes($_POST["valor_original"]);
-			$OFERTA = addslashes($_POST["oferta"]);
+			$VALOR_ORIGINAL = addslashes($_POST["valor_original"] ?? '');
+			$OFERTA = addslashes($_POST["oferta"] ?? '0');
+			file_put_contents('debug_oferta.txt', "ID: " . $_POST['id'] . " | OFERTA RECEIVED: " . $_POST["oferta"] . "\n", FILE_APPEND);
 			$FORCE_TABELA_PIX = isset($_POST["force_tabela_pix"]) ? (int)$_POST["force_tabela_pix"] : 0;
 				$CATEGORIA = isset($_POST["categoria"]) ? addslashes($_POST["categoria"]) : "Geral";
 				$PRODUTOS_RELACIONADOS = isset($_POST["produtos_relacionados"]) ? addslashes($_POST["produtos_relacionados"]) : "";
