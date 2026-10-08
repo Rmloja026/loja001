@@ -63,7 +63,7 @@ require_once("api/facebook_pixel.php");
 			$cnpj = isset($row["cnpj"]) ? $row["cnpj"] : "";
 		}
         
-		        $sql1 = mysqli_query($conn, "SELECT * from produto WHERE codigo='$id' LIMIT 1");
+		        $sql1 = mysqli_query($conn, "SELECT * from produto WHERE codigo='$id' ORDER BY id DESC LIMIT 1");
 		        while ($sql1 && $row1 = mysqli_fetch_array($sql1)) { 
 		            $codigo = $row1["codigo"];
 		            $nomeproduto = $row1["nome"];
@@ -97,7 +97,7 @@ require_once("api/facebook_pixel.php");
                 // Garantir que as variáveis básicas existam se o loop falhar por algum motivo
                 if(!isset($codigo)) { $codigo = $id; }
         
-        $sql12 = mysqli_query($conn, "SELECT * from produto WHERE codigo='$id' LIMIT 1");
+        $sql12 = mysqli_query($conn, "SELECT * from produto WHERE codigo='$id' ORDER BY id DESC LIMIT 1");
         $cliques = 0;
         $pid = 0;
         while ($sql12 && $row1 = mysqli_fetch_array($sql12)) { 
