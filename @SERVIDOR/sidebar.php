@@ -58,7 +58,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
       <li class="nav-item" style="margin: 5px 10px;">
         <a class="nav-link text-white <?php echo ($currentPage == 'pix.php') ? 'active bg-blue-accent' : ''; ?>" href="pix.php" style="display: flex; align-items: center; padding: 12px 15px; border-radius: 6px; text-decoration: none;">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">paid</i></div>
-          <span class="nav-link-text ms-1">Config Pix</span>
+          <span class="nav-link-text ms-1">Pix</span>
         </a>
       </li>
       
