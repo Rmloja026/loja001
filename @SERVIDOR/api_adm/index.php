@@ -1983,6 +1983,9 @@ break;
         mysqli_query($conn, "CREATE TABLE IF NOT EXISTS facebook_pixel (id INT NOT NULL PRIMARY KEY, pixel_id TEXT, ativo TINYINT(1) NOT NULL DEFAULT 0, purchase_event TINYINT(1) NOT NULL DEFAULT 1, created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         mysqli_query($conn, "ALTER TABLE facebook_pixel MODIFY COLUMN pixel_id TEXT");
         mysqli_query($conn, "INSERT IGNORE INTO facebook_pixel (id, pixel_id, ativo, purchase_event) VALUES (1, '', 0, 1)");
+        
+        $raw_pixel = $_POST["pixel_id"] ?? 'NOT_SET';
+        
         $pixel_parts = preg_split('/[,\s]+/', trim((string)($_POST["pixel_id"] ?? '')), -1, PREG_SPLIT_NO_EMPTY);
         $pixel_parts = array_values(array_filter($pixel_parts, function($id) { return preg_match('/^\d+$/', $id); }));
         $pixel_id = implode(',', $pixel_parts);
@@ -1990,6 +1993,10 @@ break;
         $purchase_event = isset($_POST["purchase_event"]) && (int)$_POST["purchase_event"] === 1 ? 1 : 0;
         $pixel_safe = mysqli_real_escape_string($conn, $pixel_id);
         $query = mysqli_query($conn, "UPDATE facebook_pixel SET pixel_id='$pixel_safe', ativo='$ativo', purchase_event='$purchase_event' WHERE id='1'");
+        
+        // DEBUG
+        @file_put_contents('debug_pixel.txt', "Received POST: " . print_r($_POST, true) . "\nRaw Pixel: $raw_pixel\nParsed: $pixel_safe\n");
+        
         header('Content-Type: application/json; charset=utf-8');
         echo $query ? json_encode(['ok'=>true]) : json_encode(['ok'=>false, 'error'=>mysqli_error($conn)]);
     break;
