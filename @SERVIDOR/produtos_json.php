@@ -9,7 +9,7 @@ if (!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESS
 }
 
 function produto_json_ler_payload($file) {
-    $raw = (is_string($file) && is_file($file)) ? file_get_contents($file) : (string)$file;
+    $raw = (is_string($file) && strlen($file) < 2048 && @is_file($file)) ? file_get_contents($file) : (string)$file;
     $raw = preg_replace('/^\xEF\xBB\xBF/', '', $raw);
     $raw = trim($raw);
     if (preg_match('/^```(?:json)?\s*(.*?)\s*```$/is', $raw, $matches)) $raw = trim($matches[1]);
