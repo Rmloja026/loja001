@@ -326,31 +326,7 @@ $pix_max_itens = $pix['pix_max_itens'] ?? 4;
 </head>
 
 <body class="g-sidenav-show bg-gray-200">
-  <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-dark" id="sidenav-main">
-    <div class="sidenav-header">
-      <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-      <a class="navbar-brand m-0" href="dashboard.php">
-        <span class="ms-1 font-weight-bold text-white">Loja - <?php echo $lojinha; ?></span>
-      </a>
-    </div>
-    <hr class="horizontal light mt-0 mb-2">
-    <div class="navbar-collapse w-auto" style="height: auto !important; overflow-y: auto;" id="sidenav-collapse-main">
-      <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link text-white" href="dashboard.php"><div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">dashboard</i></div><span class="nav-link-text ms-1">Dashboard</span></a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="cadastros.php"><div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">assignment_ind</i></div><span class="nav-link-text ms-1">Cadastros</span></a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="produtos.php"><div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">local_grocery_store</i></div><span class="nav-link-text ms-1">Produtos</span></a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="add_produto.php"><div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">add_circle</i></div><span class="nav-link-text ms-1">Adicionar Produto</span></a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="estatisticas.php"><div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">insert_chart</i></div><span class="nav-link-text ms-1">Estatísticas</span></a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="bloqueados.php"><div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">key</i></div><span class="nav-link-text ms-1">Bloqueados</span></a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="administrador.php"><div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">person</i></div><span class="nav-link-text ms-1">Administrador</span></a></li>
-        <li class="nav-item"><a class="nav-link active text-white bg-gradient-primary" href="pix.php"><div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">paid</i></div><span class="nav-link-text ms-1">Config Pix</span></a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="config.php"><div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">storefront</i></div><span class="nav-link-text ms-1">Config Loja</span></a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="apis.php"><div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">notification_important</i></div><span class="nav-link-text ms-1">Config Apis</span></a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="pixel.php"><div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">track_changes</i></div><span class="nav-link-text ms-1">Pixel Facebook</span></a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="sair.php"><div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">login</i></div><span class="nav-link-text ms-1">Sair</span></a></li>
-      </ul>
-    </div>
-  </aside>
+  <?php include 'sidebar.php'; ?>
 
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
@@ -1168,3 +1144,4 @@ $pix_max_itens = $pix['pix_max_itens'] ?? 4;
   </script>
 </body>
 </html>
+
