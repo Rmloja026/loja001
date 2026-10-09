@@ -718,7 +718,7 @@ document.addEventListener("DOMContentLoaded", function() {
               <a href="produto.php?produto=<?php echo $outro['codigo']; ?>" class="produto-relacionado-card" style="flex: 0 0 210px;">
                 <div class="produto-relacionado-img-wrap" style="position: relative;">
                   <img src="<?php echo $outro['img']; ?>" alt="<?php echo htmlspecialchars($outro['nome']); ?>" class="produto-relacionado-img" loading="lazy">
-                  <?php if(isset($outro['oferta_relampago']) && $outro['oferta_relampago'] == 1): ?>
+                  <?php if(isset($outro['oferta']) && (trim((string)$outro['oferta']) === '1' || $outro['oferta'] == 1)): ?>
                   <div class="relampago-badge" style="position: absolute; bottom: 0; left: 0; background: #ffcc00; padding: 2px 6px; display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: bold; color: #000; border-top-right-radius: 4px;">
                       <i class="fa-solid fa-bolt" style="font-size: 12px;"></i>
                       <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-h">00</span> : 
@@ -1060,7 +1060,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <a href="produto.php?produto=<?php echo $outro['codigo']; ?>" class="produto-relacionado-card">
             <div class="produto-relacionado-img-wrap" style="position: relative;">
               <img src="<?php echo $outro['img']; ?>" alt="<?php echo htmlspecialchars($outro['nome']); ?>" class="produto-relacionado-img" loading="lazy">
-              <?php if(isset($outro['oferta_relampago']) && $outro['oferta_relampago'] == 1): ?>
+              <?php if(isset($outro['oferta']) && (trim((string)$outro['oferta']) === '1' || $outro['oferta'] == 1)): ?>
               <div class="relampago-badge" style="position: absolute; bottom: 0; left: 0; background: #ffcc00; padding: 2px 6px; display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: bold; color: #000; border-top-right-radius: 4px;">
                   <i class="fa-solid fa-bolt" style="font-size: 12px;"></i>
                   <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-h">00</span> : 
@@ -1262,7 +1262,7 @@ function expandirCaracteristicas() {
               <a href="produto.php?produto=<?php echo $outro['codigo']; ?>" class="produto-relacionado-card">
                 <div class="produto-relacionado-img-wrap" style="position: relative;">
                   <img src="<?php echo $outro['img']; ?>" alt="<?php echo htmlspecialchars($outro['nome']); ?>" class="produto-relacionado-img" loading="lazy">
-                  <?php if(isset($outro['oferta_relampago']) && $outro['oferta_relampago'] == 1): ?>
+                  <?php if(isset($outro['oferta']) && (trim((string)$outro['oferta']) === '1' || $outro['oferta'] == 1)): ?>
                   <div class="relampago-badge" style="position: absolute; bottom: 0; left: 0; background: #ffcc00; padding: 2px 6px; display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: bold; color: #000; border-top-right-radius: 4px;">
                       <i class="fa-solid fa-bolt" style="font-size: 12px;"></i>
                       <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-h">00</span> : 

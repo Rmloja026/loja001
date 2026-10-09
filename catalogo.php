@@ -289,7 +289,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <a href="produto.php?produto=<?php echo $prod['codigo']; ?>" class="produto-card">
                     <div style="position: relative; margin-bottom: 15px;">
                         <img src="<?php echo $prod['img']; ?>" class="produto-img" alt="<?php echo htmlspecialchars($prod['nome']); ?>" style="margin-bottom: 0;">
-                        <?php if(isset($prod['oferta_relampago']) && $prod['oferta_relampago'] == 1): ?>
+                        <?php if(isset($prod['oferta']) && (trim((string)$prod['oferta']) === '1' || $prod['oferta'] == 1)): ?>
                         <div class="relampago-badge" style="position: absolute; bottom: 0; left: 0; background: #ffcc00; padding: 3px 6px; display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: bold; color: #000; border-top-right-radius: 4px;">
                             <i class="fa-solid fa-bolt" style="font-size: 12px;"></i>
                             <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-h">00</span> : 
