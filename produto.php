@@ -939,9 +939,9 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
         
         <!-- ESTOQUE -->
-        <div class="estoque-section pdp-px-16" style="margin-bottom: 20px;">
+        <div class="estoque-section" style="margin-bottom: 20px;">
           <p style="font-weight: 600; color: #333; margin-bottom: 10px; font-size: 14px;">Estoque disponível</p>
-          <div class="seletor-quantidade" style="background: #f5f5f5; border-radius: 8px; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; width: 100%; box-sizing: border-box; margin: 0 !important; max-width: 100% !important;">
+          <div class="seletor-quantidade" style="background: #f5f5f5; border-radius: 8px; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; width: 100%; box-sizing: border-box; margin: 0; max-width: 100%;">
             <span style="font-size: 14px; color: #333;">Quantidade: <strong>1</strong> <span style="color: #999; font-weight: normal;">(+50 disponíveis)</span></span>
             <i class="fa-solid fa-chevron-right" style="color: #3483fa; font-size: 12px;"></i>
           </div>
