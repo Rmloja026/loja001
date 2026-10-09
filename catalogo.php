@@ -302,9 +302,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div style="margin-top: 10px;">
                         <div class="produto-relacionado-nome" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;font-size:14px;color:#333;margin-bottom:8px;line-height:1.2;font-weight:300;"><?php echo htmlspecialchars($prod['nome']); ?></div>
                         
-                        <?php if($desconto_pct > 0 && $valor_original > 0): ?>
+                        <?php if($desconto_pct > 0 && $valor_original > 0): 
+                            $is_oferta = (isset($prod['oferta']) && (trim((string)$prod['oferta']) === '1' || $prod['oferta'] == 1));
+                            $bg_off = $is_oferta ? '#ffe600' : '#00a650';
+                            $color_off = $is_oferta ? '#333' : '#fff';
+                        ?>
                         <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
-                            <span style="background:#00a650;color:#fff;padding:2px 4px;border-radius:3px;font-size:10px;font-weight:600;"><?php echo $desconto_pct; ?>% OFF</span>
+                            <span style="background:<?php echo $bg_off; ?>;color:<?php echo $color_off; ?>;padding:2px 4px;border-radius:3px;font-size:10px;font-weight:600;"><?php echo $desconto_pct; ?>% OFF</span>
                             <s style="color:#999;font-size:12px;">R$ <?php echo number_format($valor_original, 2, ',', '.'); ?></s>
                         </div>
                         <?php endif; ?>

@@ -733,9 +733,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     $outro_original = !empty($outro['valor_original']) ? (float)str_replace(',', '.', str_replace('.', '', $outro['valor_original'])) : 0;
                     $outro_desconto = !empty($outro['desconto']) ? str_replace('%', '', $outro['desconto']) : '';
                     if ($outro_original > 0 && !empty($outro_desconto)):
+                      $is_oferta = (isset($outro['oferta']) && (trim((string)$outro['oferta']) === '1' || $outro['oferta'] == 1));
+                      $bg_off = $is_oferta ? '#ffe600' : '#00a650';
+                      $color_off = $is_oferta ? '#333' : '#fff';
                   ?>
                   <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
-                    <span style="background:#00a650;color:#fff;padding:2px 4px;border-radius:3px;font-size:10px;font-weight:600;"><?php echo $outro_desconto; ?>% OFF</span>
+                    <span style="background:<?php echo $bg_off; ?>;color:<?php echo $color_off; ?>;padding:2px 4px;border-radius:3px;font-size:10px;font-weight:600;"><?php echo $outro_desconto; ?>% OFF</span>
                     <s style="color:#999;font-size:12px;">R$ <?php echo number_format($outro_original, 2, ',', '.'); ?></s>
                   </div>
                   <?php endif; ?>
@@ -1075,9 +1078,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 $outro_original = !empty($outro['valor_original']) ? (float)str_replace(',', '.', str_replace('.', '', $outro['valor_original'])) : 0;
                 $outro_desconto = !empty($outro['desconto']) ? str_replace('%', '', $outro['desconto']) : '';
                 if ($outro_original > 0 && !empty($outro_desconto)):
+                  $is_oferta = (isset($outro['oferta']) && (trim((string)$outro['oferta']) === '1' || $outro['oferta'] == 1));
+                  $bg_off = $is_oferta ? '#ffe600' : '#00a650';
+                  $color_off = $is_oferta ? '#333' : '#fff';
               ?>
               <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
-                <span style="background:#00a650;color:#fff;padding:2px 4px;border-radius:3px;font-size:10px;font-weight:600;"><?php echo $outro_desconto; ?>% OFF</span>
+                <span style="background:<?php echo $bg_off; ?>;color:<?php echo $color_off; ?>;padding:2px 4px;border-radius:3px;font-size:10px;font-weight:600;"><?php echo $outro_desconto; ?>% OFF</span>
                 <s style="color:#999;font-size:12px;">R$ <?php echo number_format($outro_original, 2, ',', '.'); ?></s>
               </div>
               <?php endif; ?>
@@ -1277,9 +1283,12 @@ function expandirCaracteristicas() {
                     $outro_original = !empty($outro['valor_original']) ? (float)str_replace(',', '.', str_replace('.', '', $outro['valor_original'])) : 0;
                     $outro_desconto = !empty($outro['desconto']) ? str_replace('%', '', $outro['desconto']) : '';
                     if ($outro_original > 0 && !empty($outro_desconto)):
+                      $is_oferta = (isset($outro['oferta']) && (trim((string)$outro['oferta']) === '1' || $outro['oferta'] == 1));
+                      $bg_off = $is_oferta ? '#ffe600' : '#00a650';
+                      $color_off = $is_oferta ? '#333' : '#fff';
                   ?>
                   <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
-                    <span style="background:#00a650;color:#fff;padding:2px 4px;border-radius:3px;font-size:10px;font-weight:600;"><?php echo $outro_desconto; ?>% OFF</span>
+                    <span style="background:<?php echo $bg_off; ?>;color:<?php echo $color_off; ?>;padding:2px 4px;border-radius:3px;font-size:10px;font-weight:600;"><?php echo $outro_desconto; ?>% OFF</span>
                     <s style="color:#999;font-size:12px;">R$ <?php echo number_format($outro_original, 2, ',', '.'); ?></s>
                   </div>
                   <?php endif; ?>
