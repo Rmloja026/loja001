@@ -604,6 +604,9 @@ if (isset($_GET["cid"])) {
                 cli.cep = cli_cep_php;
                 cli.telefone = cli_tel_php;
                 cli.complemento = cli_comp_php;
+                
+                // Salva os dados no localStorage do dispositivo para as próximas etapas/páginas
+                localStorage.setItem('cliente_dados', JSON.stringify(cli));
             }
 
             

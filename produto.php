@@ -716,8 +716,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 $outro_valor = (float)str_replace(',', '.', str_replace('.', '', $outro['valor']));
               ?>
               <a href="produto.php?produto=<?php echo $outro['codigo']; ?>" class="produto-relacionado-card" style="flex: 0 0 210px;">
-                <div class="produto-relacionado-img-wrap">
+                <div class="produto-relacionado-img-wrap" style="position: relative;">
                   <img src="<?php echo $outro['img']; ?>" alt="<?php echo htmlspecialchars($outro['nome']); ?>" class="produto-relacionado-img" loading="lazy">
+                  <?php if(isset($outro['oferta_relampago']) && $outro['oferta_relampago'] == 1): ?>
+                  <div class="relampago-badge" style="position: absolute; bottom: 0; left: 0; background: #ffcc00; padding: 2px 6px; display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: bold; color: #000; border-top-right-radius: 4px;">
+                      <i class="fa-solid fa-bolt" style="font-size: 12px;"></i>
+                      <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-h">00</span> : 
+                      <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-m">40</span> : 
+                      <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-s">08</span>
+                  </div>
+                  <?php endif; ?>
                 </div>
                 <div class="produto-relacionado-info">
                   <div class="produto-relacionado-nome" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;font-size:14px;color:#333;margin-bottom:8px;line-height:1.2;font-weight:300;"><?php echo htmlspecialchars($outro['nome']); ?></div>
@@ -854,14 +862,23 @@ document.addEventListener("DOMContentLoaded", function() {
           <script>
             function updateRelampagoTimer() {
                 const now = new Date().getTime();
-                const cycle = 12 * 60 * 60 * 1000;
+                const cycle = 16 * 60 * 1000;
                 const timeRemaining = cycle - (now % cycle);
                 const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
                 const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-                document.getElementById('relampago-h').innerText = hours.toString().padStart(2, '0');
-                document.getElementById('relampago-m').innerText = minutes.toString().padStart(2, '0');
-                document.getElementById('relampago-s').innerText = seconds.toString().padStart(2, '0');
+                
+                const hh = hours.toString().padStart(2, '0');
+                const mm = minutes.toString().padStart(2, '0');
+                const ss = seconds.toString().padStart(2, '0');
+                
+                if(document.getElementById('relampago-h')) document.getElementById('relampago-h').innerText = hh;
+                if(document.getElementById('relampago-m')) document.getElementById('relampago-m').innerText = mm;
+                if(document.getElementById('relampago-s')) document.getElementById('relampago-s').innerText = ss;
+
+                document.querySelectorAll('.rel-h').forEach(e => e.innerText = hh);
+                document.querySelectorAll('.rel-m').forEach(e => e.innerText = mm);
+                document.querySelectorAll('.rel-s').forEach(e => e.innerText = ss);
             }
             setInterval(updateRelampagoTimer, 1000);
             updateRelampagoTimer();
@@ -1041,8 +1058,16 @@ document.addEventListener("DOMContentLoaded", function() {
             $outro_valor = (float)str_replace(',', '.', str_replace('.', '', $outro['valor']));
           ?>
           <a href="produto.php?produto=<?php echo $outro['codigo']; ?>" class="produto-relacionado-card">
-            <div class="produto-relacionado-img-wrap">
+            <div class="produto-relacionado-img-wrap" style="position: relative;">
               <img src="<?php echo $outro['img']; ?>" alt="<?php echo htmlspecialchars($outro['nome']); ?>" class="produto-relacionado-img" loading="lazy">
+              <?php if(isset($outro['oferta_relampago']) && $outro['oferta_relampago'] == 1): ?>
+              <div class="relampago-badge" style="position: absolute; bottom: 0; left: 0; background: #ffcc00; padding: 2px 6px; display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: bold; color: #000; border-top-right-radius: 4px;">
+                  <i class="fa-solid fa-bolt" style="font-size: 12px;"></i>
+                  <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-h">00</span> : 
+                  <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-m">40</span> : 
+                  <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-s">08</span>
+              </div>
+              <?php endif; ?>
             </div>
             <div class="produto-relacionado-info">
               <div class="produto-relacionado-nome" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;font-size:14px;color:#333;margin-bottom:8px;line-height:1.2;font-weight:300;"><?php echo htmlspecialchars($outro['nome']); ?></div>
@@ -1235,8 +1260,16 @@ function expandirCaracteristicas() {
               $outro_parcela = number_format($outro_valor / 12, 2, ',', '.');
             ?>
               <a href="produto.php?produto=<?php echo $outro['codigo']; ?>" class="produto-relacionado-card">
-                <div class="produto-relacionado-img-wrap">
+                <div class="produto-relacionado-img-wrap" style="position: relative;">
                   <img src="<?php echo $outro['img']; ?>" alt="<?php echo htmlspecialchars($outro['nome']); ?>" class="produto-relacionado-img" loading="lazy">
+                  <?php if(isset($outro['oferta_relampago']) && $outro['oferta_relampago'] == 1): ?>
+                  <div class="relampago-badge" style="position: absolute; bottom: 0; left: 0; background: #ffcc00; padding: 2px 6px; display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: bold; color: #000; border-top-right-radius: 4px;">
+                      <i class="fa-solid fa-bolt" style="font-size: 12px;"></i>
+                      <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-h">00</span> : 
+                      <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-m">40</span> : 
+                      <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-s">08</span>
+                  </div>
+                  <?php endif; ?>
                 </div>
                 <div class="produto-relacionado-info">
                   <div class="produto-relacionado-nome" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;font-size:14px;color:#333;margin-bottom:8px;line-height:1.2;font-weight:300;"><?php echo htmlspecialchars($outro['nome']); ?></div>

@@ -287,7 +287,17 @@ document.addEventListener("DOMContentLoaded", function() {
             ?>
             <div class="swiper-slide">
                 <a href="produto.php?produto=<?php echo $prod['codigo']; ?>" class="produto-card">
-                    <img src="<?php echo $prod['img']; ?>" class="produto-img" alt="<?php echo htmlspecialchars($prod['nome']); ?>">
+                    <div style="position: relative; margin-bottom: 15px;">
+                        <img src="<?php echo $prod['img']; ?>" class="produto-img" alt="<?php echo htmlspecialchars($prod['nome']); ?>" style="margin-bottom: 0;">
+                        <?php if(isset($prod['oferta_relampago']) && $prod['oferta_relampago'] == 1): ?>
+                        <div class="relampago-badge" style="position: absolute; bottom: 0; left: 0; background: #ffcc00; padding: 3px 6px; display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: bold; color: #000; border-top-right-radius: 4px;">
+                            <i class="fa-solid fa-bolt" style="font-size: 12px;"></i>
+                            <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-h">00</span> : 
+                            <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-m">40</span> : 
+                            <span style="background: #fff; padding: 1px 3px; border-radius: 2px;" class="rel-s">08</span>
+                        </div>
+                        <?php endif; ?>
+                    </div>
                     
                     <div style="margin-top: 10px;">
                         <div class="produto-relacionado-nome" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;font-size:14px;color:#333;margin-bottom:8px;line-height:1.2;font-weight:300;"><?php echo htmlspecialchars($prod['nome']); ?></div>
@@ -401,6 +411,28 @@ document.addEventListener("DOMContentLoaded", function() {
             1024: { slidesPerView: 5, spaceBetween: 15 },
         }
     });
+
+    function updateAllRelampagoTimers() {
+        var now = new Date().getTime();
+        var cycle = 16 * 60 * 1000;
+        var diff = cycle - (now % cycle);
+
+        var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        var hh = hours.toString().padStart(2, '0');
+        var mm = minutes.toString().padStart(2, '0');
+        var ss = seconds.toString().padStart(2, '0');
+
+        $('.rel-h').text(hh);
+        $('.rel-m').text(mm);
+        $('.rel-s').text(ss);
+    }
+    if($('.relampago-badge').length > 0){
+        setInterval(updateAllRelampagoTimers, 1000);
+        updateAllRelampagoTimers();
+    }
 </script>
 
 </body>
