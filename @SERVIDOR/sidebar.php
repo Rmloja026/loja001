@@ -10,27 +10,20 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   </div>
   <hr class="horizontal light mt-0 mb-2">
 
-  <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main" style="height: auto !important; max-height: calc(100vh - 200px); overflow-y: auto;">
+  <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main" style="height: auto !important; max-height: calc(100vh - 200px); overflow-y: auto; margin-top: 15px;">
     <ul class="navbar-nav">
-      
-      <li class="nav-item">
-        <a class="nav-link text-white <?php echo ($currentPage == 'produtos.php') ? 'active bg-blue-accent' : ''; ?>" href="produtos.php">
-          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">local_grocery_store</i></div>
-          <span class="nav-link-text ms-1">Produtos</span>
-        </a>
-      </li>
-      
-      <li class="nav-item">
-        <a class="nav-link text-white <?php echo ($currentPage == 'dashboard.php' || $currentPage == 'index.php') ? 'active bg-blue-accent' : ''; ?>" href="dashboard.php">
-          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">dashboard</i></div>
-          <span class="nav-link-text ms-1">Dashboard</span>
-        </a>
-      </li>
       
       <li class="nav-item">
         <a class="nav-link text-white <?php echo ($currentPage == 'cadastros.php') ? 'active bg-blue-accent' : ''; ?>" href="cadastros.php">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">assignment_ind</i></div>
           <span class="nav-link-text ms-1">Cadastros</span>
+        </a>
+      </li>
+      
+      <li class="nav-item">
+        <a class="nav-link text-white <?php echo ($currentPage == 'produtos.php') ? 'active bg-blue-accent' : ''; ?>" href="produtos.php">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">local_grocery_store</i></div>
+          <span class="nav-link-text ms-1">Produtos</span>
         </a>
       </li>
       
