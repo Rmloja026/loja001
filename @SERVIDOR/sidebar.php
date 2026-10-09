@@ -10,7 +10,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
   </div>
   <hr class="horizontal light mt-0 mb-2">
 
-  <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main" style="height: auto !important; max-height: calc(100vh - 200px); overflow-y: auto; margin-top: 15px;">
+  <div class="navbar-collapse w-auto" id="menu-container" style="height: auto !important; max-height: calc(100vh - 120px); overflow-y: auto; padding-bottom: 50px;">
     <ul class="navbar-nav">
       
       <li class="nav-item">
