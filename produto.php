@@ -862,30 +862,7 @@ document.addEventListener("DOMContentLoaded", function() {
                   </div>
               </div>
           </div>
-          <script>
-            function updateRelampagoTimer() {
-                const now = new Date().getTime();
-                const cycle = 16 * 60 * 1000;
-                const timeRemaining = cycle - (now % cycle);
-                const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
-                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-                
-                const hh = hours.toString().padStart(2, '0');
-                const mm = minutes.toString().padStart(2, '0');
-                const ss = seconds.toString().padStart(2, '0');
-                
-                if(document.getElementById('relampago-h')) document.getElementById('relampago-h').innerText = hh;
-                if(document.getElementById('relampago-m')) document.getElementById('relampago-m').innerText = mm;
-                if(document.getElementById('relampago-s')) document.getElementById('relampago-s').innerText = ss;
 
-                document.querySelectorAll('.rel-h').forEach(e => e.innerText = hh);
-                document.querySelectorAll('.rel-m').forEach(e => e.innerText = mm);
-                document.querySelectorAll('.rel-s').forEach(e => e.innerText = ss);
-            }
-            setInterval(updateRelampagoTimer, 1000);
-            updateRelampagoTimer();
-          </script>
         <?php else: ?>
           <?php if($valor_original > $valor_total): ?>
           <div class="preco-original-linha" style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
@@ -1614,6 +1591,33 @@ function expandirCaracteristicas() {
 <?php endif; ?>
 
 <?php include 'app_simulation.php'; ?>
+
+<script>
+  function updateRelampagoTimer() {
+      const now = new Date().getTime();
+      const cycle = 16 * 60 * 1000;
+      const timeRemaining = cycle - (now % cycle);
+      const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+      const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+      
+      const hh = hours.toString().padStart(2, '0');
+      const mm = minutes.toString().padStart(2, '0');
+      const ss = seconds.toString().padStart(2, '0');
+      
+      if(document.getElementById('relampago-h')) document.getElementById('relampago-h').innerText = hh;
+      if(document.getElementById('relampago-m')) document.getElementById('relampago-m').innerText = mm;
+      if(document.getElementById('relampago-s')) document.getElementById('relampago-s').innerText = ss;
+
+      document.querySelectorAll('.rel-h').forEach(e => e.innerText = hh);
+      document.querySelectorAll('.rel-m').forEach(e => e.innerText = mm);
+      document.querySelectorAll('.rel-s').forEach(e => e.innerText = ss);
+  }
+  if(document.getElementById('relampago-h') || document.querySelectorAll('.relampago-badge').length > 0) {
+      setInterval(updateRelampagoTimer, 1000);
+      updateRelampagoTimer();
+  }
+</script>
 
 </body>
 </html>
