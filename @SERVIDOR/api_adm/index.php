@@ -1972,6 +1972,13 @@ break;
     case "pixel_config":
         mysqli_query($conn, "CREATE TABLE IF NOT EXISTS facebook_pixel (id INT NOT NULL PRIMARY KEY, pixel_id TEXT, ativo TINYINT(1) NOT NULL DEFAULT 0, purchase_event TINYINT(1) NOT NULL DEFAULT 1, created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         mysqli_query($conn, "ALTER TABLE facebook_pixel MODIFY COLUMN pixel_id TEXT");
+        
+        // Fix for older DB imports missing the purchase_event column
+        $check_col = mysqli_query($conn, "SHOW COLUMNS FROM facebook_pixel LIKE 'purchase_event'");
+        if(mysqli_num_rows($check_col) == 0){
+            mysqli_query($conn, "ALTER TABLE facebook_pixel ADD COLUMN purchase_event TINYINT(1) NOT NULL DEFAULT 1");
+        }
+        
         mysqli_query($conn, "INSERT IGNORE INTO facebook_pixel (id, pixel_id, ativo, purchase_event) VALUES (1, '', 0, 1)");
         $sql = mysqli_query($conn, "SELECT pixel_id, ativo, purchase_event FROM facebook_pixel WHERE id='1' LIMIT 1");
         $row = $sql ? mysqli_fetch_assoc($sql) : array('pixel_id'=>'', 'ativo'=>0, 'purchase_event'=>1);
@@ -1982,6 +1989,13 @@ break;
     case "salvarPixelFacebook":
         mysqli_query($conn, "CREATE TABLE IF NOT EXISTS facebook_pixel (id INT NOT NULL PRIMARY KEY, pixel_id TEXT, ativo TINYINT(1) NOT NULL DEFAULT 0, purchase_event TINYINT(1) NOT NULL DEFAULT 1, created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
         mysqli_query($conn, "ALTER TABLE facebook_pixel MODIFY COLUMN pixel_id TEXT");
+        
+        // Fix for older DB imports missing the purchase_event column
+        $check_col2 = mysqli_query($conn, "SHOW COLUMNS FROM facebook_pixel LIKE 'purchase_event'");
+        if(mysqli_num_rows($check_col2) == 0){
+            mysqli_query($conn, "ALTER TABLE facebook_pixel ADD COLUMN purchase_event TINYINT(1) NOT NULL DEFAULT 1");
+        }
+        
         mysqli_query($conn, "INSERT IGNORE INTO facebook_pixel (id, pixel_id, ativo, purchase_event) VALUES (1, '', 0, 1)");
         
         $raw_pixel = $_POST["pixel_id"] ?? 'NOT_SET';
