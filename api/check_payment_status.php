@@ -7,13 +7,18 @@ session_start();
 require_once __DIR__ . '/db.php';
 header('Content-Type: application/json; charset=utf-8');
 
+$gateway = strtolower(trim((string)($_POST['gateway'] ?? '')));
+$transaction_id = trim((string)($_POST['transaction_id'] ?? ''));
+
+// DEBUG LOGGING
+$log_msg = "[" . date('Y-m-d H:i:s') . "] Gateway: $gateway | TID: $transaction_id | Session: " . (isset($_SESSION['session_checkout']) ? 'OK' : 'MISSING') . "\n";
+file_put_contents(__DIR__ . '/poll_log.txt', $log_msg, FILE_APPEND);
+
 if (!isset($_SESSION['session_payment']) && !isset($_SESSION['session_checkout'])) {
     echo json_encode(['success' => false, 'status' => 'UNAUTHORIZED']);
     exit;
 }
 
-$gateway = strtolower(trim((string)($_POST['gateway'] ?? '')));
-$transaction_id = trim((string)($_POST['transaction_id'] ?? ''));
 $columns = [
     'mercadopago' => ['mp_transaction_id', 'mp_status'],
     'freepay' => ['freepay_transaction_id', 'freepay_status'],
@@ -33,6 +38,11 @@ if ($gateway === 'copia_cola' && $transaction_id !== '') {
         'status' => $manual_status !== '' ? $manual_status : 'PENDING',
         'source' => 'admin'
     ]);
+    
+    // DEBUG LOGGING
+    $log_msg = "[" . date('Y-m-d H:i:s') . "] Returned: paid=" . ($manual_status === 'PAGO' ? 'true' : 'false') . " | manual_status=$manual_status\n";
+    file_put_contents(__DIR__ . '/poll_log.txt', $log_msg, FILE_APPEND);
+    
     exit;
 }
 
