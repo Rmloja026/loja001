@@ -418,6 +418,9 @@ switch($acao){
         // restauramos o modo original (ex: gateway) para que a venda não seja perdida.
         if ($pix_modo === 'copia_cola' && empty($pix_code)) {
             $pix_modo = $pix_cfg['pix_modo'] ?? 'manual';
+            if ($pix_modo === 'copia_cola') {
+                $pix_modo = 'manual';
+            }
         }
 
         // No modo copia e cola, o próprio código da tabela identifica o
