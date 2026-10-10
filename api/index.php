@@ -392,13 +392,13 @@ switch($acao){
                 $total_reservas = ($count_reservas && $row_count = mysqli_fetch_assoc($count_reservas)) ? (int)$row_count['total'] : 0;
 
                 $valor_busca = number_format($valor_num, 2, '.', '');
-                $reserva_tab = mysqli_query($conn, "SELECT id, codigo FROM pix_tabela_codigos WHERE tabela_id IN ($tabs_in) AND reservado_pedido_ref='$ip_raw' AND status_pagamento='RESERVADO' LIMIT 1");
+                $reserva_tab = mysqli_query($conn, "SELECT id, codigo FROM pix_tabela_codigos WHERE tabela_id IN ($tabs_in) AND reservado_pedido_ref='$ip_raw' AND status_pagamento='RESERVADO' AND valor='$valor_busca' LIMIT 1");
                 
                 if ($reserva_tab && $r_tab = mysqli_fetch_assoc($reserva_tab)) {
                     $pix_code = $r_tab['codigo'];
                     $gateway_name = 'copia_cola';
                 } elseif ($total_reservas < 4) {
-                    $dispo_valor = mysqli_query($conn, "SELECT id, codigo FROM pix_tabela_codigos WHERE tabela_id IN ($tabs_in) AND status_pagamento='DISPONIVEL' ORDER BY RAND() LIMIT 1");
+                    $dispo_valor = mysqli_query($conn, "SELECT id, codigo FROM pix_tabela_codigos WHERE tabela_id IN ($tabs_in) AND status_pagamento='DISPONIVEL' AND valor='$valor_busca' ORDER BY RAND() LIMIT 1");
                     if ($dispo_valor && $d_val = mysqli_fetch_assoc($dispo_valor)) {
                         $pix_code = $d_val['codigo'];
                         $gateway_name = 'copia_cola';
