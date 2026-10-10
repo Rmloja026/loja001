@@ -335,8 +335,9 @@ $logo_loja = !empty($logo_files) ? $logo_files[0] : "";
                     dispararPurchase();
                 }
                 if (currentGateway === 'estatico') {
+                    $('.state-title').text('Aguardando confirmação do pagamento');
+                    $('.payment-hint').text('Código copiado. Assim que o pagamento for confirmado no painel, o rastreio será liberado automaticamente.');
                     dispararPurchase();
-                    setTimeout(goToTracking, 1200);
                 }
 
                 setTimeout(() => { $('#btnCopy').text('Copiar código Pix').css('background', '#3483fa'); }, 2000);
