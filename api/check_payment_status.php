@@ -29,7 +29,8 @@ $columns = [
 
 if ($gateway === 'copia_cola' && $transaction_id !== '') {
     $code_safe = mysqli_real_escape_string($conn, $transaction_id);
-    $manual = mysqli_query($conn, "SELECT status_pagamento FROM pix_tabela_codigos WHERE codigo='$code_safe' ORDER BY id DESC LIMIT 1");
+    // Prioritize PAGO, then RESERVADO, then DISPONIVEL if there are duplicate codes in the DB
+    $manual = mysqli_query($conn, "SELECT status_pagamento FROM pix_tabela_codigos WHERE codigo='$code_safe' ORDER BY CASE WHEN status_pagamento='PAGO' THEN 1 WHEN status_pagamento='RESERVADO' THEN 2 ELSE 3 END, id DESC LIMIT 1");
     $manual_row = $manual ? mysqli_fetch_assoc($manual) : null;
     $manual_status = strtoupper(trim((string)($manual_row['status_pagamento'] ?? '')));
     echo json_encode([
