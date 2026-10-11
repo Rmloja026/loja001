@@ -1,4 +1,4 @@
-<?php 
+﻿<?php 
 session_start();
 require_once("api/db.php");
 require_once("api/facebook_pixel.php");
@@ -170,7 +170,7 @@ $textozap = isset($textozap) ? $textozap : '';
                         <input type="text" id="rua" class="form-control" placeholder="Ex: Av. das Nações Unidas" required>
                     </div>
 
-                    <!-- NÚMERO e COMPLEMENTO -->
+                    <!-- NÃšMERO e COMPLEMENTO -->
                     <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
                         <div class="form-group">
                             <label class="form-label" for="numero" style="font-weight: 500;">Número</label>
@@ -264,7 +264,7 @@ $textozap = isset($textozap) ? $textozap : '';
                               <input type="checkbox" id="portaria" style="opacity: 0; width: 0; height: 0;">
                               <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
                             </label>
-                            <span style="font-size: 15px; color: #333;">É possível deixar pacotes na portaria</span>
+                            <span style="font-size: 15px; color: #333;">Ã‰ possível deixar pacotes na portaria</span>
                         </div>
                     </div>
 
@@ -550,3 +550,10 @@ $textozap = isset($textozap) ? $textozap : '';
     </script>
 </body>
 </html>
+
+
+<?php 
+require_once("api/ping_session.php");
+render_tracking_script("endereco");
+?>
+

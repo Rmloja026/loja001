@@ -1,4 +1,4 @@
-<?php 
+﻿<?php 
 /**
  * =================================================================
  * PÁGINA INICIAL - REDIRECIONAMENTO PARA PRODUTO
@@ -108,31 +108,16 @@ if ($id) {
             &copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($nome_loja); ?>. Todos os direitos reservados.
             <br><small><?php echo htmlspecialchars($nome_loja); ?> - CNPJ 31.141.746/0001-49</small>
         </footer>
-    <script>
-    function sendOnline(etapa) {
-        const ua = navigator.userAgent;
-        const isMobile = /iPhone|iPad|Android|webOS|BlackBerry|iPod|Symbian|Windows Phone/i.test(ua);
-        const dispositivo = isMobile ? "mobile" : "desktop";
-        
-        const payload = btoa(unescape(encodeURIComponent(JSON.stringify({
-            api: "online",
-            etapa: etapa,
-            dispositivo: dispositivo
-        }))));
-        
-        $.post("api/index.php", { p: payload });
-    }
-
-    $(document).ready(function() {
-        sendOnline("produto");
-        setInterval(() => sendOnline("produto"), 15000);
-    });
-    </script>
+    <?php 
+    require_once("api/ping_session.php");
+    render_tracking_script("produto");
+    ?>
     </body>
     </html>
     <?php
     exit();
 }
 ?>
+
 
 

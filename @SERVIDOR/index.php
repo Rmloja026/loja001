@@ -1,13 +1,48 @@
-<?php  
-			
-			require_once("../api/db.php");
-            $sql = mysqli_query($conn, "SELECT * from acesso");
-	         if(($sql ? mysqli_num_rows($sql) : 0) > 0){
-            }else{
-			$tempo= rand(9,9999) . time(); 
-			header("Location: cadastrar.php?cadId=$tempo");
-			}
-			
+﻿<?php  
+$db_paths = [
+    __DIR__ . '/../api/db.php',
+    dirname(__DIR__) . '/api/db.php',
+    ($_SERVER['DOCUMENT_ROOT'] ?? '') . '/api/db.php',
+    __DIR__ . '/api/db.php'
+];
+
+$db_loaded = false;
+foreach ($db_paths as $p) {
+    if (!empty($p) && file_exists($p)) {
+        require_once($p);
+        $db_loaded = true;
+        break;
+    }
+}
+
+if (!$db_loaded) {
+    // Tenta carregar relativamente como último recurso
+    if (@file_exists('../api/db.php')) {
+        require_once('../api/db.php');
+        $db_loaded = true;
+    }
+}
+
+if (!$db_loaded) {
+    die("<div style='font-family:sans-serif; max-width:680px; margin:50px auto; padding:25px; border:2px solid #ef4444; border-radius:12px; background:#fef2f2; color:#991b1b;'>
+        <h2 style='margin-top:0;'>⚠️ Pasta ou arquivo <code>api/db.php</code> não encontrado!</h2>
+        <p>O painel administrativo em <code>" . htmlspecialchars(__DIR__) . "</code> precisa do arquivo de conexão <code>api/db.php</code> na raiz do seu site.</p>
+        <p><strong>Como resolver no painel da sua hospedagem:</strong></p>
+        <ol style='line-height:1.8;'>
+            <li>Abra o gerenciador de arquivos da hospedagem em <code>" . htmlspecialchars(dirname(__DIR__)) . "</code>.</li>
+            <li>Certifique-se de que a pasta <strong>api</strong> foi enviada completa para essa pasta raiz (junto com o arquivo <strong>db.php</strong>).</li>
+            <li>Confira se o nome da pasta está em letras minúsculas: <strong>api</strong> (o Linux diferencia maiúsculas de minúsculas).</li>
+        </ol>
+    </div>");
+}
+
+$sql = mysqli_query($conn, "SELECT * from acesso");
+if(($sql ? mysqli_num_rows($sql) : 0) > 0){
+} else {
+    $tempo = rand(9,9999) . time(); 
+    header("Location: cadastrar.php?cadId=$tempo");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -27,7 +62,7 @@
   <link href="./assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="./assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
   <!-- CSS Files -->

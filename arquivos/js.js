@@ -1,4 +1,4 @@
-! function(e) {
+﻿! function(e) {
 	function t(e, t, r) {
 		var o = e[0],
 			a = /er/.test(r) ? "indeterminate" : /bl/.test(r) ? "disabled" : "checked",
@@ -6222,9 +6222,9 @@ var modal = function(e, t, n) {
 			customizationInputValidator: function() {
 				n(".js-input-customization").on("keyup change", function() {
 					var e = {
-							letters: /[^a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ.!@#$%^&*()_?“{} ]/g,
+							letters: /[^a-zA-ZáàâãéèêíïóôõöúçñÁÀÃÉÈÍÏÓÔÕÖÚÇÑ.!@#$%^&*()_?“{} ]/g,
 							numbers: /[^0-9 ]/g,
-							all: /[^a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ.!@#$%^&*()_?“{}0-9 ]/g
+							all: /[^a-zA-ZáàâãéèêíïóôõöúçñÁÀÃÉÈÍÏÓÔÕÖÚÇÑ.!@#$%^&*()_?“{}0-9 ]/g
 						},
 						t = n(this),
 						i = t.attr("maxLength") || 0;

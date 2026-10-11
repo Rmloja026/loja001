@@ -1,6 +1,6 @@
-<?php 
+﻿<?php 
 session_start();
-require_once('../api/db.php');
+require_once(__DIR__ . '/../api/db.php');
 if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSION['tempo'] < time()){
     header('Location: index.php?access=fail&id='.time());
     exit;
@@ -21,7 +21,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
   <link href="./assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="./assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
   <!-- CSS Files -->
@@ -64,7 +64,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
       <div class="container-fluid py-1 px-3">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">PÃ¡gina</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Página</a></li>
             <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Administrador</li>
           </ol>
          <h6 class="font-weight-bolder mb-0">Loja V1.0</h6>
@@ -143,7 +143,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
 							  </div>
 							  <div class="d-flex align-items-start flex-column justify-content-center">
 								
-								<h6 class="mb-0 text-sm">UsuÃ¡rio: '.$login.'</h6>
+								<h6 class="mb-0 text-sm">Usuário: '.$login.'</h6>
 								<h6 class="mb-0 text-sm">Senha: '.$primeira.'******'.$ultima.'</h6>
 																
 							  </div>
@@ -168,7 +168,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
         <div class="toast fade hide p-2 mt-2 bg-gradient-danger" role="alert" aria-live="assertive" id="infoToast" aria-atomic="true">
           <div class="toast-header bg-transparent border-0">
             <i class="material-icons text-white me-2">notifications</i>
-            <span class="me-auto text-white font-weight-bold">Erro! Senha invÃ¡lida.</span>
+            <span class="me-auto text-white font-weight-bold">Erro! Senha inválida.</span>
             <i class="fas fa-times text-md text-white ms-3 cursor-pointer" data-bs-dismiss="toast" aria-label="Close"></i>
           </div>
         </div>
@@ -180,9 +180,9 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
           <div class="row align-items-center justify-content-lg-between">
             <div class="col-lg-6 mb-lg-0 mb-4">
               <div class="copyright text-center text-sm text-muted text-lg-start">
-                Â© <script>
+                © <script>
                   document.write(new Date().getFullYear())
-                </script>, Copyright Â© 2026 Marketplace. Todos os direitos reservados.
+                </script>, Copyright © 2026 Marketplace. Todos os direitos reservados.
               </div>
             </div>
            

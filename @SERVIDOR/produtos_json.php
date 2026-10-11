@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once('../api/db.php');
+require_once(__DIR__ . '/../api/db.php');
 require_once(__DIR__ . '/api_adm/produto_json.php');
 
 if (!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSION['tempo'] < time()) {

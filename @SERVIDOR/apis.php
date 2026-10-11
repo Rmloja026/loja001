@@ -1,6 +1,6 @@
-<?php 
+﻿<?php 
 session_start();
-require_once('../api/db.php');
+require_once(__DIR__ . '/../api/db.php');
 if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSION['tempo'] < time()){
     header('Location: index.php?access=fail&id='.time());
     exit;
@@ -21,7 +21,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
   <link href="./assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="./assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
   <!-- CSS Files -->
@@ -64,7 +64,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
       <div class="container-fluid py-1 px-3">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">PÃ¡gina</a></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Página</a></li>
             <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Config Apis</li>
           </ol>
           <h6 class="font-weight-bolder mb-0">Loja V1.0</h6>
@@ -224,7 +224,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
           <div class="row align-items-center justify-content-lg-between">
             <div class="col-lg-6 mb-lg-0 mb-4">
               <div class="copyright text-center text-sm text-muted text-lg-start">
-                Â© <script>
+                © <script>
                   document.write(new Date().getFullYear())
                 </script>,
                 Desenvolvido com <i class="fa fa-heart"></i> por
@@ -320,9 +320,53 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
 	
 	function salvarLinkApiEmail(){
     var the = document.getElementById("salvarLinkApiEmail").value;	
-	$.post("api_adm/", {painel:"salvarLinkApiEmail", qual:the},function(show){
+    if (!the || the.trim() === "") {
+        alert("Informe as credenciais antes de salvar.");
+        return;
+    }
+	$.post("api_adm/", {painel:"salvarLinkApiEmail", qual:the}, function(show){
 	  window.location.reload();
-	 });
+	});
+	}
+
+	function alternarSmtp(st){
+	  $.post('api_adm/', {painel: "toggle_smtp", status: st}, function(res){
+	    window.location.reload();
+	  }).fail(function(){
+	    fetch('../api/toggle_smtp.php?status=' + st).then(function(){
+	      window.location.reload();
+	    });
+	  });
+	}
+
+	function testarEmail(){
+	  var emailDest = prompt("Digite seu e-mail pessoal para receber o teste:", "");
+	  if (!emailDest || emailDest.trim() === "") return;
+
+	  var dest = emailDest.trim();
+	  var btn = window.event ? window.event.target : null;
+	  var oldText = "";
+	  if (btn) {
+	    oldText = btn.innerText;
+	    btn.innerText = "Enviando...";
+	  }
+
+	  $.post('api_adm/', {painel: "testarEmail", destinatario: dest}, function(data){
+	    if (btn) btn.innerText = oldText;
+	    try {
+	      var r = typeof data === 'object' ? data : JSON.parse(data);
+	      if (r.ok) {
+	        alert("SUCESSO!\n" + r.msg);
+	      } else {
+	        alert("FALHA NO DISPARO:\n" + r.error);
+	      }
+	    } catch(e) {
+	      alert("Resposta do servidor:\n" + data);
+	    }
+	  }).fail(function(){
+	    if (btn) btn.innerText = oldText;
+	    alert("Erro na conexão com o servidor.");
+	  });
 	}
 	
 	

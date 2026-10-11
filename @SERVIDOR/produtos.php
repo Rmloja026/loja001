@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 session_start();
-require_once("../api/db.php");
+require_once(__DIR__ . '/../api/db.php');
 
 if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSION['tempo'] < time()){
     header('Location: index.php?access=fail&id='.time());
@@ -17,6 +17,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
   <link href="./assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="./assets/css/nucleo-svg.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -397,7 +398,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
       var urlBase = window.location.href.split('/@SERVIDOR/')[0];
       
       // Padronizando todos os links para passar pelo index.php
-      // Isso garante que a sessÃ£o seja iniciada corretamente e o Anti-Crawler funcione sempre
+      // Isso garante que a sessão seja iniciada corretamente e o Anti-Crawler funcione sempre
       var link = urlBase + "/index.php?id=" + codigo;
       
       var textArea = document.createElement("textarea");

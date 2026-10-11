@@ -64,6 +64,29 @@ while($sql && $row = mysqli_fetch_array($sql)){
 		$MinhaSenha = trim($recorte[1] ?? '');
 		$config_email_remetente = trim($recorte[2] ?? '');
 
+		// Normalização para Resend (chave re_...)
+		if (strpos($MeuEmail, 're_') === 0) {
+			if (!empty($MinhaSenha) && empty($config_email_remetente)) {
+				$config_email_remetente = $MinhaSenha;
+			}
+			$MinhaSenha = $MeuEmail;
+		} elseif (strpos($MinhaSenha, 're_') === 0) {
+			if (!empty($MeuEmail) && empty($config_email_remetente)) {
+				$config_email_remetente = $MeuEmail;
+			}
+		}
+
+		// Se o usuário digitou pedidos.casaecozinha.casa sem o arroba @, corrige automaticamente
+		if (!empty($config_email_remetente) && strpos($config_email_remetente, '@') === false && strpos($config_email_remetente, '.') !== false) {
+			$pts = explode('.', $config_email_remetente, 2);
+			$config_email_remetente = $pts[0] . '@' . $pts[1];
+		}
+
+		// Se for Resend e o remetente ainda não estiver definido, o padrão verificado é pedidos@casaecozinha.casa
+		if ((strpos($MeuEmail, 're_') === 0 || strpos($MinhaSenha, 're_') === 0) && empty($config_email_remetente)) {
+			$config_email_remetente = 'pedidos@casaecozinha.casa';
+		}
+
 		// Se o primeiro valor for uma API Key da Brevo (xkeysib-...) e não houver segundo valor
 		if (strpos($MeuEmail, 'xkeysib-') === 0 && empty($MinhaSenha)) {
 			$MinhaSenha = $MeuEmail;
@@ -364,12 +387,12 @@ if (strtolower($MeuEmail) === 'sendpulse') {
 			// ==========================================
 			// PROVEDOR 1: RESEND (Melhor Grátis - API HTTP)
 			// ==========================================
-			$apiKey = (strpos($MinhaSenha, 're_') === 0) ? $MinhaSenha : $MeuEmail;
-			// Após verificar o domínio casaecozinha.casa no Resend, usar email do domínio verificado (pedidos para evitar filtros de spam)
+			$apiKey = trim((strpos($MinhaSenha, 're_') === 0) ? $MinhaSenha : $MeuEmail);
 			$senderEmail = filter_var($config_email_remetente, FILTER_VALIDATE_EMAIL) ? $config_email_remetente : 'pedidos@casaecozinha.casa';
 			
+			$fromName = !empty($loja) ? preg_replace('/[<>,"]/', '', trim($loja)) : 'Loja';
 			$payload = json_encode([
-				"from" => "$loja <$senderEmail>",
+				"from" => "$fromName <$senderEmail>",
 				"to" => [$emailCliente],
 				"subject" => "$texto1email id:$idCliente",
 				"html" => $texto
@@ -387,7 +410,10 @@ if (strtolower($MeuEmail) === 'sendpulse') {
 
 			$response = curl_exec($ch);
 			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			$curlError = curl_error($ch);
 			curl_close($ch);
+
+			@file_put_contents(__DIR__ . '/mail_debug.txt', date('[Y-m-d H:i:s] ') . "Resend HTTP $httpCode - Remetente: $senderEmail - Resposta: $response - cURL Err: $curlError\n", FILE_APPEND);
 
 			if ($httpCode == 200 || $httpCode == 201) {
 				echo 'Email enviado com sucesso';

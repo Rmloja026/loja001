@@ -1,5 +1,5 @@
-<?php
-$str = "ConfiguraÃ§Ã£o do Pix da Loja";
+﻿<?php
+$str = "Configuração do Pix da Loja";
 $decoded = utf8_decode($str);
 echo "utf8_decode: " . $decoded . "\n";
 

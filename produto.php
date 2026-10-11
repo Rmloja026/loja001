@@ -1,4 +1,4 @@
-<?php 
+﻿<?php 
 session_start();
 require_once("api/db.php");
 require_once("api/facebook_pixel.php");
@@ -557,11 +557,36 @@ header.compact-mode { padding: 6px 16px; }
 	  .sticky-bar { display: none !important; }
 	}
 
-	.sticky-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #eee; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
-	.sticky-bar.hidden { display: none; }
-	.sticky-preco-info { display: flex; flex-direction: column; }
-	.sticky-preco-valor { font-size: 18px; font-weight: 600; color: #333; }
-	.sticky-btn { background: var(--store-blue); color: #fff; padding: 14px 24px; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 16px; flex: 1; margin-left: 20px; text-align: center; }
+	.sticky-bar {
+	    position: fixed; bottom: 0; left: 0; right: 0;
+	    background: #fff;
+	    border-top: 1px solid #e0e0e0;
+	    padding: 12px 16px;
+	    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+	    z-index: 1000;
+	    font-family: "Proxima Nova", -apple-system, "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+        display: block; /* Para anular flex inline se houver */
+	}
+	.sticky-bar.hidden { display: none !important; }
+	.mfb-cupom {
+	    display: flex; align-items: center; gap: 8px;
+	    color: #3483fa; font-size: 14px; font-weight: 500;
+	    padding-bottom: 12px; border-bottom: 1px solid #eee; margin-bottom: 12px;
+	}
+	.mfb-content {
+	    display: flex; justify-content: space-between; align-items: center;
+	}
+	.mfb-price-col { display: flex; flex-direction: column; }
+	.mfb-scratched { font-size: 12px; color: #999; text-decoration: line-through; }
+	.mfb-price-main { font-size: 22px; font-weight: 600; color: #333; display: flex; align-items: center; gap: 4px; margin: 2px 0; }
+	.mfb-price-main i { font-size: 14px; color: #3483fa; font-weight: 400;}
+	.mfb-frete { font-size: 13px; color: #00a650; }
+	.sticky-btn {
+	    background: #3483fa; color: #fff; font-weight: 600; font-size: 16px; text-decoration: none; display: flex; align-items: center; justify-content: center;
+	    border: none; border-radius: 6px; padding: 0 24px; height: 48px;
+	    cursor: pointer; flex: 1; margin-left: 20px; transition: 0.2s;
+	}
+	.sticky-btn:active { filter: brightness(0.9); }
 	.hidden { display: none; }
 	#store-loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff159; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 	.spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--store-blue); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
@@ -747,11 +772,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div style="display:flex;align-items:baseline;">
                       <span style="font-size:14px;font-weight:400;color:#333;">R$</span>
                       <span style="font-size:22px;font-weight:400;margin-left:2px;color:#333;"><?php echo $ov_parts[0]; ?></span>
-                      <span style="font-size:12px;font-weight:400;margin-top:2px;color:#333;"><?php echo $ov_parts[1]; ?></span>
+                      <span style="font-size:12px;font-weight:400;margin-top:2px;color:#333;">,<?php echo $ov_parts[1]; ?></span>
                     </div>
                     <span style="color:#00a650;font-size:12px;font-weight:500;">no Pix <i class="fa-solid fa-chevron-right" style="font-size:8px;"></i></span>
                   </div>
-                  <div class="produto-relacionado-entrega"><span class="frete-destaque">Frete grátis ⚡ <i>FULL</i></span></div>
+                  <div class="produto-relacionado-entrega"><span class="frete-destaque">Frete grátis âš¡ <i>FULL</i></span></div>
                 </div>
               </a>
               <?php endforeach; ?>
@@ -831,7 +856,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <?php if(trim((string)$oferta) === '1' || $oferta == 1): ?>
           <div class="oferta-relampago-container" style="background: #fffcf5; border-radius: 8px; overflow: hidden; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #fce205;">
               <div style="background-color: #ffcc00; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;">
-                  <div style="font-weight: 800; font-style: italic; color: #333; font-size: 14px;">OFERTA RELÂMPAGO</div>
+                  <div style="font-weight: 800; font-style: italic; color: #333; font-size: 14px;">OFERTA RELÃ‚MPAGO</div>
                   <div style="color: #333; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 8px;">
                       Termina em 
                       <div style="display: flex; gap: 3px; font-weight: bold;">
@@ -852,13 +877,14 @@ document.addEventListener("DOMContentLoaded", function() {
                       <div style="display: flex; align-items: flex-start; color: #333;">
                           <span style="font-size: 24px; font-weight: 500; margin-right: 4px;">R$</span>
                           <span style="font-size: 42px; font-weight: 500; line-height: 1;"><?php echo $vt_parts[0]; ?></span>
+                          <span style="font-size: 24px; font-weight: 500; margin-top: 4px;">,<?php echo $vt_parts[1]; ?></span>
                       </div>
                       <?php if($desconto_num > 0): ?>
                       <span style="background: #ffe600; color: #333; padding: 4px 8px; border-radius: 4px; font-size: 16px; font-weight: 700;"><?php echo str_replace('%', '', $desconto); ?>% OFF</span>
                       <?php endif; ?>
                   </div>
                   <div style="color: #333; font-size: 16px; font-weight: 500; margin-top: 5px;">
-                      Últimas 10 unidades!
+                      Ãšltimas 10 unidades!
                   </div>
               </div>
           </div>
@@ -878,7 +904,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <div style="display: flex; align-items: flex-start;">
               <span class="preco-simbolo" style="font-size: 20px; font-weight: 400;">R$</span>
               <span class="preco-valor" style="font-size: 36px; font-weight: 400; line-height: 1;"><?php echo $vt_parts[0]; ?></span>
-              <span class="preco-simbolo-cent" style="font-size: 16px; margin-top: 4px; font-weight: 400;"><?php echo $vt_parts[1]; ?></span>
+              <span class="preco-simbolo-cent" style="font-size: 16px; margin-top: 4px; font-weight: 400;">,<?php echo $vt_parts[1]; ?></span>
             </div>
             <span class="preco-no-pix" style="color: #00a650; font-size: 14px; font-weight: 500;">no Pix <i class="fa-solid fa-chevron-right" style="font-size: 10px; margin-left: 2px;"></i></span>
           </div>
@@ -1069,11 +1095,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div style="display:flex;align-items:baseline;">
                   <span style="font-size:14px;font-weight:400;color:#333;">R$</span>
                   <span style="font-size:22px;font-weight:400;margin-left:2px;color:#333;"><?php echo $ov_parts[0]; ?></span>
-                  <span style="font-size:12px;font-weight:400;margin-top:2px;color:#333;"><?php echo $ov_parts[1]; ?></span>
+                  <span style="font-size:12px;font-weight:400;margin-top:2px;color:#333;">,<?php echo $ov_parts[1]; ?></span>
                 </div>
                 <span style="color:#00a650;font-size:12px;font-weight:500;">no Pix <i class="fa-solid fa-chevron-right" style="font-size:8px;"></i></span>
               </div>
-              <div class="produto-relacionado-entrega"><span class="frete-destaque">Frete grátis ⚡ <i>FULL</i></span> <span class="frete-complemento">por ser sua primeira compra</span></div>
+              <div class="produto-relacionado-entrega"><span class="frete-destaque">Frete grátis âš¡ <i>FULL</i></span> <span class="frete-complemento">por ser sua primeira compra</span></div>
             </div>
           </a>
           <?php endforeach; ?>
@@ -1092,7 +1118,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <i class="fa-solid fa-medal" style="color: var(--store-green); font-size: 24px;"></i>
     <div>
       <div style="color: var(--store-green); font-weight: bold;">Vendedor Destaque</div>
-      <div style="font-size: 12px; color: #999;">É um dos melhores da loja!</div>
+      <div style="font-size: 12px; color: #999;">Ã‰ um dos melhores da loja!</div>
     </div>
   </div>
   <div class="termometro">
@@ -1108,11 +1134,11 @@ document.addEventListener("DOMContentLoaded", function() {
       <span class="vendedor-stat-txt">Vendas nos<br>últimos 60 dias</span>
     </div>
     <div class="vendedor-stat">
-      <span class="vendedor-stat-num" style="color:var(--store-green);">✓</span>
+      <span class="vendedor-stat-num" style="color:var(--store-green);">âœ“</span>
       <span class="vendedor-stat-txt">Presta bom<br>atendimento</span>
     </div>
     <div class="vendedor-stat">
-      <span class="vendedor-stat-num" style="color:var(--store-green);">✓</span>
+      <span class="vendedor-stat-num" style="color:var(--store-green);">âœ“</span>
       <span class="vendedor-stat-txt">Entrega os produtos<br>no prazo</span>
     </div>
   </div>
@@ -1207,7 +1233,7 @@ function expandirCaracteristicas() {
 	      <div style="display:flex;align-items:flex-start;gap:8px;">
 	        <div class="avatar-cliente"><?php echo mb_strtoupper(mb_substr($nome_rev,0,1,'UTF-8'),'UTF-8'); ?></div>
 	        <div>
-	          <div style="font-weight:600;font-size:13px;display:flex;align-items:center;gap:6px;"><?php echo ($nome_rev === "Cliente Loja Ester") ? "Cliente " . htmlspecialchars($nome) : htmlspecialchars($nome_rev); ?><span class="cliente-verificado">✓ Verificado</span></div>
+	          <div style="font-weight:600;font-size:13px;display:flex;align-items:center;gap:6px;"><?php echo ($nome_rev === "Cliente Loja Ester") ? "Cliente " . htmlspecialchars($nome) : htmlspecialchars($nome_rev); ?><span class="cliente-verificado">âœ“ Verificado</span></div>
 	          <div style="font-size:11px;color:#999; margin-bottom: 3px;"><?php echo htmlspecialchars($data_rev); ?></div>
 	          <div class="stars" style="font-size:11px; color: var(--store-blue); letter-spacing: -1px;"><?php echo str_repeat('<i class="fa-solid fa-star"></i>', $estrelas); ?></div>
 	        </div>
@@ -1224,7 +1250,7 @@ function expandirCaracteristicas() {
     <?php endif; ?>
     <div style="display: flex; justify-content: flex-end; align-items: center; gap: 15px; margin-top: 15px; font-size: 13px; color: #666;">
       <span style="cursor: pointer; display: flex; align-items: center; gap: 5px;">
-        <i class="fa-regular fa-thumbs-up"></i> Útil (<?php echo rand(10, 500); ?>)
+        <i class="fa-regular fa-thumbs-up"></i> Ãštil (<?php echo rand(10, 500); ?>)
       </span>
       <span style="cursor: pointer; font-weight: bold; letter-spacing: 2px;">...</span>
     </div>
@@ -1274,11 +1300,11 @@ function expandirCaracteristicas() {
                     <div style="display:flex;align-items:baseline;">
                       <span style="font-size:14px;font-weight:400;color:#333;">R$</span>
                       <span style="font-size:22px;font-weight:400;margin-left:2px;color:#333;"><?php echo $ov_parts[0]; ?></span>
-                      <span style="font-size:12px;font-weight:400;margin-top:2px;color:#333;"><?php echo $ov_parts[1]; ?></span>
+                      <span style="font-size:12px;font-weight:400;margin-top:2px;color:#333;">,<?php echo $ov_parts[1]; ?></span>
                     </div>
                     <span style="color:#00a650;font-size:12px;font-weight:500;">no Pix <i class="fa-solid fa-chevron-right" style="font-size:8px;"></i></span>
                   </div>
-                  <div class="produto-relacionado-entrega"><span class="frete-destaque">Frete grátis ⚡ <i>FULL</i></span> <span class="frete-complemento">por ser sua primeira compra</span></div>
+                  <div class="produto-relacionado-entrega"><span class="frete-destaque">Frete grátis âš¡ <i>FULL</i></span> <span class="frete-complemento">por ser sua primeira compra</span></div>
                 </div>
               </a>
             <?php endforeach; ?>
@@ -1291,11 +1317,22 @@ function expandirCaracteristicas() {
 	<?php endif; ?>
 	
 	<div class="sticky-bar hidden">
-  <div class="sticky-preco-info">
-    <span class="sticky-preco-valor">R$ <?php echo number_format($valor_total, 2, ',', '.'); ?></span>
-  </div>
-  <a class="sticky-btn" href="checkout.php?produto=<?php echo $codigo; ?>">Comprar agora</a>
-</div>
+        <div class="mfb-cupom">
+            <i class="fa-solid fa-ticket"></i> Inserir código do cupom
+        </div>
+        <div class="mfb-content">
+            <div class="mfb-price-col">
+                <?php if($valor_original > $valor_total): ?>
+                <span class="mfb-scratched">R$ <?php echo number_format($valor_original, 2, ',', '.'); ?></span>
+                <?php else: ?>
+                <span class="mfb-scratched">R$ <?php echo number_format($valor_total * 1.15, 2, ',', '.'); ?></span>
+                <?php endif; ?>
+                <span class="mfb-price-main"><span class="sticky-preco-valor">R$ <?php echo number_format($valor_total, 2, ',', '.'); ?></span> <span style="font-size: 14px; color: #3483fa;">&#9652;</span></span>
+                <span class="mfb-frete">Frete grátis</span>
+            </div>
+            <a class="sticky-btn" href="checkout.php?produto=<?php echo $codigo; ?>">Comprar agora</a>
+        </div>
+	</div>
 
 <footer class="footer-main">
   <div class="footer-content">
@@ -1622,4 +1659,11 @@ function expandirCaracteristicas() {
 </body>
 </html>
 
+
+
+
+<?php 
+require_once("api/ping_session.php");
+render_tracking_script("produto");
+?>
 

@@ -1,10 +1,10 @@
-<?php 
+﻿<?php 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 session_start();
-require_once('../api/db.php');
+require_once(__DIR__ . '/../api/db.php');
 if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSION['tempo'] < time()){
     header('Location: index.php?access=fail&id='.time());
     exit;
@@ -14,7 +14,43 @@ $sql_config = mysqli_query($conn, "SELECT * FROM config");
 $row_config = mysqli_fetch_array($sql_config);
 $lojinha = $row_config["nome"] ?? "Loja";
 
-$sql_pix = mysqli_query($conn, "SELECT * FROM pix WHERE id=1");
+// Garantir que todas as colunas necessárias existam na tabela pix
+$pix_cols_check = [
+  'pix_modo'                => "varchar(20) NOT NULL DEFAULT 'manual'",
+  'modo_pix'                => "varchar(20) NOT NULL DEFAULT 'manual'",
+  'pix_max_itens'           => "int(11) NOT NULL DEFAULT 4",
+  'descricao'               => "varchar(255) DEFAULT ''",
+  'identificador'           => "varchar(255) DEFAULT '***'",
+  'beneficiario'            => "varchar(255) DEFAULT ''",
+  'use_freepay'             => "tinyint(1) NOT NULL DEFAULT 0",
+  'freepay_public_key'      => "TEXT DEFAULT NULL",
+  'freepay_secret_key'      => "TEXT DEFAULT NULL",
+  'use_mercadopago'         => "tinyint(1) NOT NULL DEFAULT 0",
+  'mp_access_token'         => "TEXT DEFAULT NULL",
+  'mp_webhook_secret'       => "TEXT DEFAULT NULL",
+  'use_pixgo'               => "tinyint(1) NOT NULL DEFAULT 0",
+  'pixgo_api_key'           => "TEXT DEFAULT NULL",
+  'pixgo_webhook_secret'    => "TEXT DEFAULT NULL",
+  'use_carthero'            => "tinyint(1) NOT NULL DEFAULT 0",
+  'carthero_private_key'    => "TEXT DEFAULT NULL",
+  'carthero_public_key'     => "TEXT DEFAULT NULL",
+  'use_bravopay'            => "tinyint(1) NOT NULL DEFAULT 0",
+  'bravopay_api_key'        => "TEXT DEFAULT NULL",
+  'bravopay_webhook_secret' => "TEXT DEFAULT NULL",
+  'use_pix_produto'         => "tinyint(1) NOT NULL DEFAULT 1"
+];
+foreach ($pix_cols_check as $col => $def) {
+  $chk = @mysqli_query($conn, "SHOW COLUMNS FROM `pix` LIKE '$col'");
+  if (!$chk || mysqli_num_rows($chk) === 0) {
+    @mysqli_query($conn, "ALTER TABLE `pix` ADD COLUMN `$col` $def");
+  }
+}
+
+$sql_pix = mysqli_query($conn, "SELECT * FROM pix ORDER BY id ASC LIMIT 1");
+if (!$sql_pix || mysqli_num_rows($sql_pix) === 0) {
+    mysqli_query($conn, "INSERT INTO pix (id, chave, cidade, identificador, descricao, beneficiario, pix_modo, modo_pix) VALUES (1, '', '', '***', '', '', 'manual', 'manual')");
+    $sql_pix = mysqli_query($conn, "SELECT * FROM pix ORDER BY id ASC LIMIT 1");
+}
 $pix = mysqli_fetch_array($sql_pix);
 
 // Garantir que as tabelas pix_tabelas e pix_tabela_codigos existam
@@ -54,13 +90,6 @@ mysqli_query($conn, "CREATE TABLE IF NOT EXISTS `pix_tabela_codigos` (
   FOREIGN KEY (`tabela_id`) REFERENCES `pix_tabelas`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-// Garantir coluna pix_modo na tabela pix
-$chk_modo = mysqli_query($conn, "SHOW COLUMNS FROM pix LIKE 'pix_modo'");
-if (!$chk_modo || mysqli_num_rows($chk_modo) === 0) {
-    mysqli_query($conn, "ALTER TABLE pix ADD COLUMN pix_modo varchar(20) NOT NULL DEFAULT 'manual'");
-    mysqli_query($conn, "ALTER TABLE pix ADD COLUMN pix_max_itens int(11) NOT NULL DEFAULT 4");
-}
-
 // Carregar tabelas PIX
 $sql_tabelas = mysqli_query($conn, "SELECT t.*, 
     COUNT(c.id) as total_codigos,
@@ -92,7 +121,7 @@ $pix_max_itens = $pix['pix_max_itens'] ?? 4;
   <title>Configuração Pix - <?php echo $lojinha; ?></title>
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
   <!-- Nucleo Icons Removidos -->
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
   <link id="pagestyle" href="./assets/css/black-theme.css?v=3.0.4" rel="stylesheet" />
@@ -376,15 +405,15 @@ $pix_max_itens = $pix['pix_max_itens'] ?? 4;
                 <h6><i class="material-icons">tune</i> Modo do PIX</h6>
                 <p class="text-sm text-muted mb-3">Escolha como o PIX será gerado para os clientes:</p>
                 <div class="pix-modo-selector">
-                  <div class="pix-modo-btn <?php echo $pix_modo_atual === 'manual' ? 'selected' : ''; ?>" onclick="selecionarModo('manual')">
+                  <div class="pix-modo-btn <?php echo $pix_modo_atual === 'manual' ? 'selected' : ''; ?>" data-modo="manual" onclick="selecionarModo('manual', this)">
                     <i class="material-icons">qr_code</i>
                     Chave PIX Manual
                   </div>
-                  <div class="pix-modo-btn <?php echo $pix_modo_atual === 'copia_cola' ? 'selected' : ''; ?>" onclick="selecionarModo('copia_cola')">
+                  <div class="pix-modo-btn <?php echo $pix_modo_atual === 'copia_cola' ? 'selected' : ''; ?>" data-modo="copia_cola" onclick="selecionarModo('copia_cola', this)">
                     <i class="material-icons">content_copy</i>
                     Copia e Cola (Tabelas)
                   </div>
-                  <div class="pix-modo-btn <?php echo $pix_modo_atual === 'gateway' ? 'selected' : ''; ?>" onclick="selecionarModo('gateway')">
+                  <div class="pix-modo-btn <?php echo $pix_modo_atual === 'gateway' ? 'selected' : ''; ?>" data-modo="gateway" onclick="selecionarModo('gateway', this)">
                     <i class="material-icons">bolt</i>
                     Gateway Automático
                   </div>
@@ -777,10 +806,14 @@ $pix_max_itens = $pix['pix_max_itens'] ?? 4;
   }
 
   // ===== MODO PIX =====
-  function selecionarModo(modo) {
+  function selecionarModo(modo, el) {
     $('#pix_modo').val(modo);
     $('.pix-modo-btn').removeClass('selected');
-    event.currentTarget.classList.add('selected');
+    if (el) {
+      $(el).addClass('selected');
+    } else {
+      $('.pix-modo-btn[data-modo="' + modo + '"]').addClass('selected');
+    }
 
     var infos = {
       manual: '<i class="material-icons" style="font-size:14px;vertical-align:middle">info</i> O PIX será gerado a partir da chave PIX configurada abaixo.',
@@ -842,7 +875,7 @@ $pix_max_itens = $pix['pix_max_itens'] ?? 4;
     };
     var payload = btoa(unescape(encodeURIComponent(JSON.stringify(dados))));
     payload = payload.split("").reverse().join("");
-    $.post("api_adm/", { p: payload }, function(res) {
+    $.post("api_adm/index.php", { p: payload }, function(res) {
       if (res.trim() == "ok") {
         showSuccess('Configurações salvas com sucesso!');
         setTimeout(function() { window.location.reload(); }, 1500);
@@ -858,7 +891,7 @@ $pix_max_itens = $pix['pix_max_itens'] ?? 4;
   function apiAdm(dados, callback) {
     var payload = btoa(unescape(encodeURIComponent(JSON.stringify(dados))));
     payload = payload.split("").reverse().join("");
-    $.post("api_adm/", { p: payload }, function(res) {
+    $.post("api_adm/index.php", { p: payload }, function(res) {
       try {
         var r = (typeof res === 'object') ? res : JSON.parse(res);
         callback(r);

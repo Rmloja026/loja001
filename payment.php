@@ -1,4 +1,4 @@
-<?php 
+﻿<?php 
 session_start();
 require_once("api/db.php");
 require_once("api/facebook_pixel.php");
@@ -23,6 +23,7 @@ if (!isset($_GET["produto"])) {
             $nome = $row["nome"];
             $endereco = isset($row["endereco"]) ? $row["endereco"] : "";
             $cnpj = isset($row["cnpj"]) ? $row["cnpj"] : "";
+            $cartao_ativo = isset($row["cartao_ativo"]) ? $row["cartao_ativo"] : 1;
         }
         $sql1 = mysqli_query($conn, "SELECT * from produto WHERE codigo='$id'");
         while($sql1 && $row1 = mysqli_fetch_array($sql1)){ 
@@ -319,6 +320,7 @@ if (isset($_GET["cid"])) {
                             </div>
                         </label>
 
+                        <?php if ($cartao_ativo == 1): ?>
                         <label class="radio-label method-label" onclick="selectMethod('cartao')">
                             <div class="radio-wrap">
                                 <input type="radio" name="payment" value="cartao" id="radio-cartao">
@@ -332,6 +334,7 @@ if (isset($_GET["cid"])) {
                                 <span class="method-desc">Pague em até 12x sem juros.</span>
                             </div>
                         </label>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -713,4 +716,11 @@ if (isset($_GET["cid"])) {
 
 
 
+
+
+
+<?php 
+require_once("api/ping_session.php");
+render_tracking_script("pagamento");
+?>
 

@@ -1,6 +1,28 @@
 <?php
 $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
+<!-- Fontes de Ícones Seguras (FontAwesome 6 + Material Icons) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Round|Material+Icons+Outlined">
+<style>
+.material-icons, .material-icons-round, .material-icons-outlined, i.material-icons, i.material-icons-round {
+  font-family: 'Material Icons', 'Material Icons Round', 'Material Icons Outlined' !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  display: inline-block !important;
+  white-space: nowrap !important;
+  word-wrap: normal !important;
+  direction: ltr !important;
+  font-feature-settings: 'liga' 1 !important;
+  -webkit-font-feature-settings: 'liga' !important;
+  -webkit-font-smoothing: antialiased !important;
+  vertical-align: middle !important;
+}
+</style>
 <aside class="sidenav border-0 border-radius-xl my-3 fixed-start ms-3 bg-dark-sidebar" id="sidenav-main" style="display: flex; flex-direction: column; overflow: hidden; z-index: 1050; padding: 0;">
   
   <div style="flex-shrink: 0; background: inherit; position: relative; z-index: 2; border-bottom: 1px solid rgba(255,255,255,0.1);">
@@ -59,6 +81,13 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <a class="nav-link text-white <?php echo ($currentPage == 'pix.php') ? 'active bg-blue-accent' : ''; ?>" href="pix.php" style="display: flex; align-items: center; padding: 12px 15px; border-radius: 6px; text-decoration: none;">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">paid</i></div>
           <span class="nav-link-text ms-1">Pix</span>
+        </a>
+      </li>
+
+      <li class="nav-item" style="margin: 5px 10px;">
+        <a class="nav-link text-white <?php echo ($currentPage == 'cartao.php') ? 'active bg-blue-accent' : ''; ?>" href="cartao.php" style="display: flex; align-items: center; padding: 12px 15px; border-radius: 6px; text-decoration: none;">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center"><i class="material-icons opacity-10">credit_card</i></div>
+          <span class="nav-link-text ms-1">Cartão</span>
         </a>
       </li>
       

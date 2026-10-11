@@ -27,15 +27,64 @@ if ($sql && $row = mysqli_fetch_array($sql)) {
     }
     
     $recorte = explode("|", $emailPHPMAILER);
-    if (count($recorte) < 2) {
-        die("Erro: O formato do email na tabela 'apis' está incorreto. Esperado: email|senha");
+    $MeuEmail = trim($recorte[0] ?? '');
+    $MinhaSenha = trim($recorte[1] ?? '');
+    
+    if (strpos($MeuEmail, 're_') === 0 && empty($MinhaSenha)) {
+        $MinhaSenha = 'pedidos@casaecozinha.casa';
     }
     
-    $MeuEmail = $recorte[0];
-    $MinhaSenha = $recorte[1];
-    echo "Credenciais encontradas para o email: <b>$MeuEmail</b><br><br>";
+    if (empty($MinhaSenha) && strpos($MeuEmail, 're_') === false) {
+        die("Erro: O formato do email na tabela 'apis' está incorreto. Esperado: email|senha ou re_CHAVE|email");
+    }
+    
+    echo "Credenciais encontradas: <b>$MeuEmail</b> | Remetente: <b>$MinhaSenha</b><br><br>";
 } else {
     die("Erro: Nenhuma configuração de API encontrada na tabela 'apis'.");
+}
+
+if (strpos($MeuEmail, 're_') === 0 || strpos($MinhaSenha, 're_') === 0) {
+    echo "<h3>Testando conexão com API oficial do Resend (HTTPS porta 443)...</h3>";
+    $apiKey = (strpos($MeuEmail, 're_') === 0) ? $MeuEmail : $MinhaSenha;
+    $remetente = (strpos($MeuEmail, 're_') === 0) ? $MinhaSenha : $MeuEmail;
+    if (empty($remetente) || strpos($remetente, 're_') === 0) {
+        $remetente = 'pedidos@casaecozinha.casa';
+    }
+    if (strpos($remetente, '@') === false && strpos($remetente, '.') !== false) {
+        $pts = explode('.', $remetente, 2);
+        $remetente = $pts[0] . '@' . $pts[1];
+    }
+    
+    $destinoTeste = !empty($_GET['email']) ? trim($_GET['email']) : 'teste@exemplo.com';
+    
+    $payload = json_encode([
+        "from" => "Loja Teste <$remetente>",
+        "to" => [$destinoTeste],
+        "subject" => "Teste de Conexão Resend",
+        "html" => "<p>Teste de envio bem sucedido pelo Resend com remetente <b>$remetente</b>!</p>"
+    ]);
+
+    $ch = curl_init('https://api.resend.com/emails');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $apiKey
+    ]);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
+    curl_close($ch);
+
+    echo "<b>Código HTTP:</b> $httpCode<br>";
+    echo "<b>Resposta da API:</b> " . htmlspecialchars($response) . "<br>";
+    if ($httpCode == 200 || $httpCode == 201) {
+        echo "<br><b style='color:green;'>API Resend conectada e validada com sucesso! Remetente $remetente está operando.</b><br>";
+    } else {
+        echo "<br><b style='color:red;'>Falha na requisição Resend. Verifique a chave de API ou se o domínio casaecozinha.casa está 'Verified' no Resend.</b><br>";
+    }
+    exit;
 }
 
 if (strtolower($MeuEmail) === 'sendpulse') {

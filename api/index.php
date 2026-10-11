@@ -258,9 +258,12 @@ switch($acao){
 
         $check = mysqli_query($conn, "SELECT id FROM online WHERE ip='$ip' LIMIT 1");
         if($check && mysqli_num_rows($check) > 0){
-            mysqli_query($conn, "UPDATE online SET etapa='$etapa', time='$tempo', hora='$hora', useragent='$ua', cidade='$cidade', estado='$estado', situacao='ativo' WHERE ip='$ip'");
+            $r = mysqli_query($conn, "UPDATE online SET etapa='$etapa', time='$tempo', hora='$hora', useragent='$ua', cidade='$cidade', estado='$estado', situacao='ativo' WHERE ip='$ip'");
+            if (!$r) @file_put_contents('tracking_error.log', "UPDATE error: " . mysqli_error($conn) . "\n", FILE_APPEND);
         } else {
-            mysqli_query($conn, "INSERT INTO online (ip, useragent, etapa, cidade, estado, dispositivo, hora, time, situacao) VALUES ('$ip', '$ua', '$etapa', '$cidade', '$estado', '$dispositivo', '$hora', '$tempo', 'ativo')");
+            $r = mysqli_query($conn, "INSERT INTO online (ip, useragent, etapa, cidade, estado, dispositivo, hora, time, situacao) VALUES ('$ip', '$ua', '$etapa', '$cidade', '$estado', '$dispositivo', '$hora', '$tempo', 'ativo')");
+            if (!$r) @file_put_contents('tracking_error.log', "INSERT error: " . mysqli_error($conn) . "\n", FILE_APPEND);
+            
             
             // Insert into specific metric tables for historical tracking
             if ($dispositivo === 'mobile') {

@@ -1,4 +1,4 @@
-<?php 
+﻿<?php 
 session_start();
 require_once("api/db.php");
 require_once("api/facebook_pixel.php");
@@ -393,4 +393,11 @@ if (!isset($_GET["produto"])) {
 </body>
 </html>
 
+
+
+
+<?php 
+require_once("api/ping_session.php");
+render_tracking_script("checkout");
+?>
 

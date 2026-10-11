@@ -70,8 +70,8 @@ textarea.form-control {
 }
 
 /* Esconde o texto do ícone que aparece em inglês nas abas */
-.material-icons, .material-icons-round, i.material-icons, i.material-icons-round {
-  font-family: 'Material Icons Round' !important;
+.material-icons, .material-icons-round, .material-icons-outlined, i.material-icons, i.material-icons-round {
+  font-family: 'Material Icons', 'Material Icons Round', 'Material Icons Outlined' !important;
   font-weight: normal !important;
   font-style: normal !important;
   font-size: 20px !important;
@@ -82,6 +82,7 @@ textarea.form-control {
   white-space: nowrap !important;
   word-wrap: normal !important;
   direction: ltr !important;
+  font-feature-settings: 'liga' 1 !important;
   -webkit-font-feature-settings: 'liga' !important;
   -webkit-font-smoothing: antialiased !important;
   color: inherit !important;
@@ -99,5 +100,6 @@ textarea.form-control {
 
 /* Limpeza adicional para o menu lateral */
 .sidenav .nav-link i {
-  font-family: 'Material Icons Round' !important;
+  font-family: 'Material Icons', 'Material Icons Round' !important;
 }
+

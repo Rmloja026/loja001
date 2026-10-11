@@ -1,7 +1,7 @@
-<?php 
+﻿<?php 
 header('Content-Type: text/html; charset=utf-8');
 session_start();
-require_once('../api/db.php');
+require_once(__DIR__ . '/../api/db.php');
 if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSION['tempo'] < time()){
     header('Location: index.php?access=fail&id='.time());
     exit;
@@ -17,7 +17,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
   <link href="./assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="./assets/css/nucleo-svg.css" rel="stylesheet" />
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
     <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -275,7 +275,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
               <small class="text-secondary">Você também pode colar um JSON diretamente no campo acima (substitui os campos acima).</small>
             </div>
 
-            <!-- SEÇÃO DE VARIAÇÕES DINÂMICAS -->
+            <!-- SEÇÃO DE VARIAÇÕES DINMICAS -->
             <div class="url-input-group" style="background: #f9f9f9; border: 1px solid #e0e0e0;">
               <h6><i class="material-icons" style="vertical-align: middle;">tune</i> Variações do Produto</h6>
               <p class="text-xs text-secondary mb-3">Selecione o tipo de produto para exibir as opções de variação correspondentes.</p>
@@ -350,7 +350,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
 	                      </div>
 	                      <img id="prev_cor_<?php echo $c; ?>" class="img-preview" style="width: 60px; height: 60px;">
 	                      <?php if($c == 1): ?>
-	                      <small class="text-info d-block mt-1">Dica: A Cor 1 usa a imagem principal por padrÁƒÂ£o se deixar a URL vazia.</small>
+	                      <small class="text-info d-block mt-1">Dica: A Cor 1 usa a imagem principal por padrÁƒ£o se deixar a URL vazia.</small>
 	                      <?php endif; ?>
 	                    </div>
 	                  </div>
@@ -412,7 +412,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
 	      
 	      const doc = new DOMParser().parseFromString(raw, "text/html");
 	
-	      // 1. Título e PreÁƒÂ§o
+	      // 1. Título e PreÁƒ§o
 	      const title = doc.querySelector('.ui-pdp-title')?.innerText || '';
 	      const price = doc.querySelector('.andes-money-amount__fraction')?.innerText || '';
 	      
@@ -684,7 +684,7 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
 	          var msg = "Produto adicionado com sucesso!\n\nLink para divulgação:\n" + linkProduto;
 		          if(confirm(msg + "\n\nDeseja copiar o link agora?")) {
 		            copyToClipboard(linkProduto);
-		            alert("Link copiado para a ÁƒÂ¡rea de transferÁƒÂªncia!");
+		            alert("Link copiado para a Áƒ¡rea de transferÁƒªncia!");
 		            window.location.href = "produtos.php";
 		          } else {
 		            window.location.href = "produtos.php";
@@ -735,15 +735,15 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
 
 	    function gerarNomesAleatorios() {
 	      const nomes = [
-	        "ClÁƒÂ¡udia Martins", "JoÁƒÂ£o Silva", "Maria Oliveira", "Ricardo Santos", "Fernanda Lima",
-	        "Marcos Pereira", "Juliana Costa", "AndrÁƒÂ© Souza", "Patrícia Gomes", "Lucas Ferreira",
-	        "BÁƒÂ¡rbara Alves", "Roberto Rocha", "Camila Ribeiro", "Daniela Machado", "Tiago Mendes",
+	        "ClÁƒ¡udia Martins", "JoÁƒ£o Silva", "Maria Oliveira", "Ricardo Santos", "Fernanda Lima",
+	        "Marcos Pereira", "Juliana Costa", "AndrÁƒ© Souza", "Patrícia Gomes", "Lucas Ferreira",
+	        "BÁƒ¡rbara Alves", "Roberto Rocha", "Camila Ribeiro", "Daniela Machado", "Tiago Mendes",
 	        "Aline Barbosa", "Bruno Carvalho", "Vanessa Lopes", "Felipe Nunes", "Renata Vieira",
-	        "Gustavo Castro", "Letícia Cardoso", "SÁƒÂ©rgio Teixeira", "Paula GuimarÁƒÂ£es", "Eduardo Freitas",
+	        "Gustavo Castro", "Letícia Cardoso", "SÁƒ©rgio Teixeira", "Paula GuimarÁƒ£es", "Eduardo Freitas",
 	        "Beatriz Ramos", "Marcelo Correa", "Sabrina Borges", "Rodrigo Pires", "Priscila Araújo",
-	        "Gabriel Monteiro", "Tatiane Nascimento", "Rafael Silveira", "MÁƒÂ´nica Duarte", "Diego Caldas",
-	        "Lúcia Cavalcanti", "Hugo Viana", "Larissa Fonseca", "OtÁƒÂ¡vio Meireles", "Carla Peixoto",
-	        "Renan Assis", "DÁƒÂ©bora Campos", "ÁƒÂtalo Moura", "JÁƒÂ©ssica BraganÁƒÂ§a", "Maurício Padilha"
+	        "Gabriel Monteiro", "Tatiane Nascimento", "Rafael Silveira", "MÁƒ´nica Duarte", "Diego Caldas",
+	        "Lúcia Cavalcanti", "Hugo Viana", "Larissa Fonseca", "OtÁƒ¡vio Meireles", "Carla Peixoto",
+	        "Renan Assis", "DÁƒ©bora Campos", "Áƒtalo Moura", "JÁƒ©ssica BraganÁƒ§a", "Maurício Padilha"
 	      ];
 	      
 	      // Embaralhar nomes
@@ -756,18 +756,18 @@ if(!isset($_SESSION['login'], $_SESSION['senha'], $_SESSION['tempo']) || $_SESSI
 	          input.value = embaralhados[i-1];
 	        }
 	        
-	        // Preencher data aleatÁƒÂ³ria recente se estiver vazio
+	        // Preencher data aleatÁƒ³ria recente se estiver vazio
 	        const dataInput = document.getElementById("rev_data_" + i);
 	        if(dataInput && !dataInput.value) {
 	          const hoje = new Date();
-	          const diaAtras = Math.floor(Math.random() * 60); // atÁƒÂ© 60 dias atrÁƒÂ¡s
+	          const diaAtras = Math.floor(Math.random() * 60); // atÁƒ© 60 dias atrÁƒ¡s
 	          const dataRev = new Date(hoje.setDate(hoje.getDate() - diaAtras));
 	          dataInput.value = dataRev.toLocaleDateString('pt-BR');
 	        }
 	      }
 	    }
 	    
-	    // Chamar ao carregar a pÁƒÂ¡gina para jÁƒÂ¡ ter nomes prontos
+	    // Chamar ao carregar a pÁƒ¡gina para jÁƒ¡ ter nomes prontos
 	    window.addEventListener('load', gerarNomesAleatorios);
 
 	    function copyToClipboard(text) {

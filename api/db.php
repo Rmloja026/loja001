@@ -54,65 +54,109 @@ if (!$conn) {
 }
 
 // Definir charset para evitar problemas com acentuação
+@ini_set('default_charset', 'UTF-8');
+if (!headers_sent() && php_sapi_name() !== 'cli') {
+    @header('Content-Type: text/html; charset=utf-8');
+}
 @mysqli_set_charset($conn, "utf8mb4");
+@mysqli_query($conn, "SET NAMES 'utf8mb4'");
+@mysqli_query($conn, "SET CHARACTER SET utf8mb4");
 
-$db_schema_flag = sys_get_temp_dir() . '/loja_db_schema_' . md5(__FILE__) . '.flag';
+if (!function_exists('safe_add_column')) {
+    function safe_add_column($conn, $table, $column, $definition) {
+        $chk = @mysqli_query($conn, "SHOW COLUMNS FROM `$table` LIKE '$column'");
+        if (!$chk || mysqli_num_rows($chk) === 0) {
+            @mysqli_query($conn, "ALTER TABLE `$table` ADD COLUMN `$column` $definition");
+        }
+    }
+}
+
+$db_schema_flag = sys_get_temp_dir() . '/loja_db_schema_v5_' . md5(__FILE__) . '.flag';
 if (!file_exists($db_schema_flag) || (time() - filemtime($db_schema_flag) > 86400)) {
-    // Auto-migrate tabelas PIX. O painel usa pix_tabelas/pix_tabela_codigos;
-    // instalações antigas usavam pix_tabelas.status/pix_codigos_multiplos.
+    // Tabelas PIX
     @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS pix_tabelas (id INT AUTO_INCREMENT PRIMARY KEY, nome VARCHAR(255) NOT NULL, ativa TINYINT(1) NOT NULL DEFAULT 0, criado_em DATETIME DEFAULT CURRENT_TIMESTAMP)");
-    @mysqli_query($conn, "ALTER TABLE pix_tabelas ADD COLUMN IF NOT EXISTS ativa TINYINT(1) NOT NULL DEFAULT 0");
+    safe_add_column($conn, 'pix_tabelas', 'ativa', 'TINYINT(1) NOT NULL DEFAULT 0');
+    
     $pix_status_col = @mysqli_query($conn, "SHOW COLUMNS FROM pix_tabelas LIKE 'status'");
     if ($pix_status_col && mysqli_num_rows($pix_status_col) > 0) {
         @mysqli_query($conn, "UPDATE pix_tabelas SET ativa = IF(status='ATIVA', 1, 0) WHERE ativa=0");
     }
+    
     @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS pix_tabela_codigos (id INT AUTO_INCREMENT PRIMARY KEY, tabela_id INT NOT NULL, valor DECIMAL(10,2) NOT NULL DEFAULT 0.00, codigo TEXT NOT NULL, status_pagamento VARCHAR(20) NOT NULL DEFAULT 'DISPONIVEL', reservado_em DATETIME DEFAULT NULL, reservado_pedido_ref VARCHAR(100) DEFAULT NULL, pago_em DATETIME DEFAULT NULL, criado_em DATETIME DEFAULT CURRENT_TIMESTAMP, INDEX idx_tabela_id (tabela_id), INDEX idx_status (status_pagamento)) ENGINE=InnoDB");
-    @mysqli_query($conn, "ALTER TABLE pix_tabela_codigos ADD COLUMN IF NOT EXISTS valor DECIMAL(10,2) NOT NULL DEFAULT 0.00");
-    @mysqli_query($conn, "ALTER TABLE pix_tabela_codigos ADD COLUMN IF NOT EXISTS status_pagamento VARCHAR(20) NOT NULL DEFAULT 'DISPONIVEL'");
-    @mysqli_query($conn, "ALTER TABLE pix_tabela_codigos ADD COLUMN IF NOT EXISTS reservado_em DATETIME DEFAULT NULL");
-    @mysqli_query($conn, "ALTER TABLE pix_tabela_codigos ADD COLUMN IF NOT EXISTS reservado_pedido_ref VARCHAR(100) DEFAULT NULL");
-    @mysqli_query($conn, "ALTER TABLE pix_tabela_codigos ADD COLUMN IF NOT EXISTS pago_em DATETIME DEFAULT NULL");
-    // Importar registros do modelo antigo sem duplicar códigos já migrados.
+    safe_add_column($conn, 'pix_tabela_codigos', 'valor', 'DECIMAL(10,2) NOT NULL DEFAULT 0.00');
+    safe_add_column($conn, 'pix_tabela_codigos', 'status_pagamento', "VARCHAR(20) NOT NULL DEFAULT 'DISPONIVEL'");
+    safe_add_column($conn, 'pix_tabela_codigos', 'reservado_em', 'DATETIME DEFAULT NULL');
+    safe_add_column($conn, 'pix_tabela_codigos', 'reservado_pedido_ref', 'VARCHAR(100) DEFAULT NULL');
+    safe_add_column($conn, 'pix_tabela_codigos', 'pago_em', 'DATETIME DEFAULT NULL');
+    
+    // Importar registros do modelo antigo
     $old_pix_codes = @mysqli_query($conn, "SHOW TABLES LIKE 'pix_codigos_multiplos'");
     if ($old_pix_codes && mysqli_num_rows($old_pix_codes) > 0) {
         @mysqli_query($conn, "INSERT INTO pix_tabela_codigos (tabela_id, codigo, valor, status_pagamento, pago_em) SELECT tabela_id, codigo, valor, CASE WHEN status='pago' THEN 'PAGO' WHEN status='reservado' THEN 'RESERVADO' ELSE 'DISPONIVEL' END, data_uso FROM pix_codigos_multiplos old WHERE NOT EXISTS (SELECT 1 FROM pix_tabela_codigos newc WHERE newc.tabela_id=old.tabela_id AND newc.codigo=old.codigo)");
     }
+    
     @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS gateways_config (id INT AUTO_INCREMENT PRIMARY KEY, nome VARCHAR(100) NOT NULL, status ENUM('ativo', 'inativo') DEFAULT 'inativo', taxa_pct DECIMAL(10,2) DEFAULT 0.00, taxa_fixa DECIMAL(10,2) DEFAULT 0.00, api_key VARCHAR(255) DEFAULT '', secret_key VARCHAR(255) DEFAULT '', webhook_secret VARCHAR(255) DEFAULT '')");
-    @mysqli_query($conn, "ALTER TABLE pix ADD COLUMN IF NOT EXISTS modo_pix VARCHAR(100) DEFAULT 'manual'");
-    @mysqli_query($conn, "ALTER TABLE pix ADD COLUMN IF NOT EXISTS pix_modo VARCHAR(20) NOT NULL DEFAULT 'manual'");
+    
+    // Garantir colunas completas para a tabela 'pix'
+    @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS `pix` (`id` INT AUTO_INCREMENT PRIMARY KEY, `chave` TEXT, `tipo_chave` VARCHAR(20) DEFAULT 'aleatoria') ENGINE=InnoDB");
+    safe_add_column($conn, 'pix', 'modo_pix', "VARCHAR(100) DEFAULT 'manual'");
+    safe_add_column($conn, 'pix', 'pix_modo', "VARCHAR(20) NOT NULL DEFAULT 'manual'");
+    safe_add_column($conn, 'pix', 'pix_max_itens', "INT(11) NOT NULL DEFAULT 4");
+    safe_add_column($conn, 'pix', 'limite_por_cliente', "INT DEFAULT 4");
+    safe_add_column($conn, 'pix', 'aleatorio_multiplas', "TINYINT(1) DEFAULT 0");
+    safe_add_column($conn, 'pix', 'cidade', "VARCHAR(255) DEFAULT ''");
+    safe_add_column($conn, 'pix', 'identificador', "VARCHAR(255) DEFAULT '***'");
+    safe_add_column($conn, 'pix', 'descricao', "VARCHAR(255) DEFAULT ''");
+    safe_add_column($conn, 'pix', 'beneficiario', "VARCHAR(255) DEFAULT ''");
+    safe_add_column($conn, 'pix', 'use_freepay', "TINYINT(1) NOT NULL DEFAULT 0");
+    safe_add_column($conn, 'pix', 'freepay_public_key', "TEXT DEFAULT NULL");
+    safe_add_column($conn, 'pix', 'freepay_secret_key', "TEXT DEFAULT NULL");
+    safe_add_column($conn, 'pix', 'use_mercadopago', "TINYINT(1) NOT NULL DEFAULT 0");
+    safe_add_column($conn, 'pix', 'mp_access_token', "TEXT DEFAULT NULL");
+    safe_add_column($conn, 'pix', 'mp_webhook_secret', "TEXT DEFAULT NULL");
+    safe_add_column($conn, 'pix', 'use_pixgo', "TINYINT(1) NOT NULL DEFAULT 0");
+    safe_add_column($conn, 'pix', 'pixgo_api_key', "TEXT DEFAULT NULL");
+    safe_add_column($conn, 'pix', 'pixgo_webhook_secret', "TEXT DEFAULT NULL");
+    safe_add_column($conn, 'pix', 'use_carthero', "TINYINT(1) NOT NULL DEFAULT 0");
+    safe_add_column($conn, 'pix', 'carthero_private_key', "TEXT DEFAULT NULL");
+    safe_add_column($conn, 'pix', 'carthero_public_key', "TEXT DEFAULT NULL");
+    safe_add_column($conn, 'pix', 'use_bravopay', "TINYINT(1) NOT NULL DEFAULT 0");
+    safe_add_column($conn, 'pix', 'bravopay_api_key', "TEXT DEFAULT NULL");
+    safe_add_column($conn, 'pix', 'bravopay_webhook_secret', "TEXT DEFAULT NULL");
+    safe_add_column($conn, 'pix', 'use_pix_produto', "TINYINT(1) NOT NULL DEFAULT 1");
     @mysqli_query($conn, "UPDATE pix SET pix_modo=modo_pix WHERE (pix_modo IS NULL OR pix_modo='manual') AND modo_pix IN ('copia_cola','gateway')");
-    @mysqli_query($conn, "ALTER TABLE pix ADD COLUMN IF NOT EXISTS limite_por_cliente INT DEFAULT 4");
-    @mysqli_query($conn, "ALTER TABLE pix ADD COLUMN IF NOT EXISTS aleatorio_multiplas TINYINT(1) DEFAULT 0");
 
     // Garantir colunas completas para a tabela 'pixgerado'
     @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS pixgerado (id INT AUTO_INCREMENT PRIMARY KEY, ip VARCHAR(45), useragent TEXT, valor VARCHAR(20), produto VARCHAR(50), hora VARCHAR(20), time INT) ENGINE=InnoDB");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS produto_nome VARCHAR(255) DEFAULT ''");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS cliente_nome VARCHAR(255) DEFAULT ''");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS cliente_telefone VARCHAR(50) DEFAULT ''");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS cliente_cpf VARCHAR(20) DEFAULT ''");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS cliente_email VARCHAR(255) DEFAULT ''");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'pendente'");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS variacoes TEXT");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS pix_code TEXT");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS pix_qr_base64 TEXT");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS carthero_payment_id VARCHAR(64) DEFAULT ''");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS carthero_status VARCHAR(32) DEFAULT 'pending'");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS mp_transaction_id VARCHAR(64) DEFAULT ''");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS freepay_transaction_id VARCHAR(64) DEFAULT ''");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS pixgo_payment_id VARCHAR(64) DEFAULT ''");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS bravopay_payment_id VARCHAR(64) DEFAULT ''");
-    @mysqli_query($conn, "ALTER TABLE pixgerado ADD COLUMN IF NOT EXISTS bravopay_status VARCHAR(32) DEFAULT 'pending'");
+    safe_add_column($conn, 'pixgerado', 'produto_nome', "VARCHAR(255) DEFAULT ''");
+    safe_add_column($conn, 'pixgerado', 'cliente_nome', "VARCHAR(255) DEFAULT ''");
+    safe_add_column($conn, 'pixgerado', 'cliente_telefone', "VARCHAR(50) DEFAULT ''");
+    safe_add_column($conn, 'pixgerado', 'cliente_cpf', "VARCHAR(20) DEFAULT ''");
+    safe_add_column($conn, 'pixgerado', 'cliente_email', "VARCHAR(255) DEFAULT ''");
+    safe_add_column($conn, 'pixgerado', 'status', "VARCHAR(50) DEFAULT 'pendente'");
+    safe_add_column($conn, 'pixgerado', 'variacoes', "TEXT");
+    safe_add_column($conn, 'pixgerado', 'pix_code', "TEXT");
+    safe_add_column($conn, 'pixgerado', 'pix_qr_base64', "TEXT");
+    safe_add_column($conn, 'pixgerado', 'data_criacao', "DATETIME DEFAULT CURRENT_TIMESTAMP");
+    safe_add_column($conn, 'pixgerado', 'carthero_payment_id', "VARCHAR(64) DEFAULT ''");
+    safe_add_column($conn, 'pixgerado', 'carthero_status', "VARCHAR(32) DEFAULT 'pending'");
+    safe_add_column($conn, 'pixgerado', 'mp_transaction_id', "VARCHAR(64) DEFAULT ''");
+    safe_add_column($conn, 'pixgerado', 'freepay_transaction_id', "VARCHAR(64) DEFAULT ''");
+    safe_add_column($conn, 'pixgerado', 'pixgo_payment_id', "VARCHAR(64) DEFAULT ''");
+    safe_add_column($conn, 'pixgerado', 'bravopay_payment_id', "VARCHAR(64) DEFAULT ''");
+    safe_add_column($conn, 'pixgerado', 'bravopay_status', "VARCHAR(32) DEFAULT 'pending'");
 
     // Garantir colunas completas para a tabela 'online'
     @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS online (id INT AUTO_INCREMENT PRIMARY KEY, ip VARCHAR(45), useragent TEXT, hora VARCHAR(20), time INT) ENGINE=InnoDB");
-    @mysqli_query($conn, "ALTER TABLE online ADD COLUMN IF NOT EXISTS etapa VARCHAR(50) DEFAULT ''");
-    @mysqli_query($conn, "ALTER TABLE online ADD COLUMN IF NOT EXISTS cidade VARCHAR(100) DEFAULT ''");
-    @mysqli_query($conn, "ALTER TABLE online ADD COLUMN IF NOT EXISTS estado VARCHAR(100) DEFAULT ''");
-    @mysqli_query($conn, "ALTER TABLE online ADD COLUMN IF NOT EXISTS dispositivo VARCHAR(50) DEFAULT ''");
-    @mysqli_query($conn, "ALTER TABLE online ADD COLUMN IF NOT EXISTS situacao VARCHAR(20) DEFAULT 'ativo'");
+    safe_add_column($conn, 'online', 'etapa', "VARCHAR(50) DEFAULT ''");
+    safe_add_column($conn, 'online', 'cidade', "VARCHAR(100) DEFAULT ''");
+    safe_add_column($conn, 'online', 'estado', "VARCHAR(100) DEFAULT ''");
+    safe_add_column($conn, 'online', 'dispositivo', "VARCHAR(50) DEFAULT 'desktop'");
+    safe_add_column($conn, 'online', 'situacao', "VARCHAR(20) DEFAULT 'ativo'");
+    safe_add_column($conn, 'online', 'time', "INT(11)");
+    safe_add_column($conn, 'online', 'hora', "VARCHAR(20)");
 
-    // Garantir estrutura completa para salvar os cadastros/leads do checkout.
+    // Garantir estrutura completa para 'clientes'
     @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS clientes (
         id INT AUTO_INCREMENT PRIMARY KEY,
         nome VARCHAR(255) DEFAULT NULL,
@@ -136,28 +180,23 @@ if (!file_exists($db_schema_flag) || (time() - filemtime($db_schema_flag) > 8640
         ip_real VARCHAR(100) DEFAULT NULL,
         data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-    if ($conn) {
-        $colunas_clientes = [
-            'estado'         => "VARCHAR(50) DEFAULT NULL",
-            'destinatario'   => "VARCHAR(255) DEFAULT NULL",
-            'quantidade'     => "VARCHAR(10) DEFAULT '1'",
-            'valortotal'     => "VARCHAR(20) DEFAULT NULL",
-            'variacoes'      => "LONGTEXT DEFAULT NULL",
-            'produto_codigo' => "VARCHAR(100) DEFAULT NULL",
-            'produto_nome'   => "VARCHAR(255) DEFAULT NULL",
-            'ip_real'        => "VARCHAR(100) DEFAULT NULL",
-            'data_cadastro'  => "TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP"
-        ];
-        foreach ($colunas_clientes as $nome_coluna => $definicao_coluna) {
-            $nome_seguro = mysqli_real_escape_string($conn, $nome_coluna);
-            $existe_coluna = @mysqli_query($conn, "SHOW COLUMNS FROM clientes LIKE '$nome_seguro'");
-            if (!$existe_coluna || mysqli_num_rows($existe_coluna) === 0) {
-                @mysqli_query($conn, "ALTER TABLE clientes ADD COLUMN `$nome_coluna` $definicao_coluna");
-            }
-        }
+    
+    $colunas_clientes = [
+        'estado'         => "VARCHAR(50) DEFAULT NULL",
+        'destinatario'   => "VARCHAR(255) DEFAULT NULL",
+        'quantidade'     => "VARCHAR(10) DEFAULT '1'",
+        'valortotal'     => "VARCHAR(20) DEFAULT NULL",
+        'variacoes'      => "LONGTEXT DEFAULT NULL",
+        'produto_codigo' => "VARCHAR(100) DEFAULT NULL",
+        'produto_nome'   => "VARCHAR(255) DEFAULT NULL",
+        'ip_real'        => "VARCHAR(100) DEFAULT NULL",
+        'data_cadastro'  => "TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP"
+    ];
+    foreach ($colunas_clientes as $nome_coluna => $definicao_coluna) {
+        safe_add_column($conn, 'clientes', $nome_coluna, $definicao_coluna);
     }
 
-    // Garantir que a tabela vendas_confirmadas exista
+    // Tabela vendas_confirmadas
     @mysqli_query($conn, "CREATE TABLE IF NOT EXISTS vendas_confirmadas (
         id INT AUTO_INCREMENT PRIMARY KEY,
         transaction_id VARCHAR(100) NOT NULL,
@@ -172,12 +211,12 @@ if (!file_exists($db_schema_flag) || (time() - filemtime($db_schema_flag) > 8640
         data_venda DATETIME DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
-    // Garantir estrutura via schema_check
-    require_once __DIR__ . '/schema_check.php';
-
-    @mysqli_query($conn, "ALTER TABLE produto ADD COLUMN IF NOT EXISTS cliques INT DEFAULT 0");
-    @mysqli_query($conn, "ALTER TABLE config ADD COLUMN IF NOT EXISTS app_mobile_ativo TINYINT(1) DEFAULT 0");
-    @mysqli_query($conn, "ALTER TABLE apis ADD COLUMN IF NOT EXISTS smtp_ativo TINYINT(1) DEFAULT 1");
+    // Colunas em outras tabelas
+    safe_add_column($conn, 'produto', 'cliques', "INT DEFAULT 0");
+    safe_add_column($conn, 'produto', 'force_tabela_pix', "TINYINT(1) DEFAULT 0");
+    safe_add_column($conn, 'config', 'app_mobile_ativo', "TINYINT(1) DEFAULT 0");
+    safe_add_column($conn, 'config', 'cartao_ativo', "TINYINT(1) DEFAULT 1");
+    safe_add_column($conn, 'apis', 'smtp_ativo', "TINYINT(1) DEFAULT 1");
 
     @file_put_contents($db_schema_flag, time());
 }

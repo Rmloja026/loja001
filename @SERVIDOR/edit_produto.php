@@ -1,7 +1,7 @@
-<?php 
+﻿<?php 
 header('Content-Type: text/html; charset=utf-8');
 session_start();
-require_once("../api/db.php");
+require_once(__DIR__ . '/../api/db.php');
 
 // Autenticação básica
 $sql_acesso = mysqli_query($conn, "SELECT * FROM acesso");
@@ -36,7 +36,7 @@ $v_data = json_decode($prod['variacoes'] ?? '{}', true) ?: [];
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
   <link href="./assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="./assets/css/nucleo-svg.css" rel="stylesheet" />
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
     <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -217,7 +217,7 @@ $v_data = json_decode($prod['variacoes'] ?? '{}', true) ?: [];
                 </div>
               </div>
 
-              <!-- CORES E IMAGENS ESPECÁƒÂFICAS -->
+              <!-- CORES E IMAGENS ESPECÁƒFICAS -->
               <div id="var_cores_master" style="display:none;">
                 <h6 class="mt-4 mb-3" style="font-size: 14px; color: #344767;">Cores e Imagens Específicas</h6>
                 <div class="row">
@@ -607,7 +607,7 @@ $v_data = json_decode($prod['variacoes'] ?? '{}', true) ?: [];
 	        "Beatriz Ramos", "Marcelo Correa", "Sabrina Borges", "Rodrigo Pires", "Priscila Araújo",
 	        "Gabriel Monteiro", "Tatiane Nascimento", "Rafael Silveira", "Mônica Duarte", "Diego Caldas",
 	        "Lúcia Cavalcanti", "Hugo Viana", "Larissa Fonseca", "Otávio Meireles", "Carla Peixoto",
-	        "Renan Assis", "Débora Campos", "ÁƒÂtalo Moura", "Jéssica Bragança", "Maurício Padilha"
+	        "Renan Assis", "Débora Campos", "Áƒtalo Moura", "Jéssica Bragança", "Maurício Padilha"
 	      ];
 	      const embaralhados = nomes.sort(() => 0.5 - Math.random());
 	      for(let i=1; i<=5; i++) {

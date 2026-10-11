@@ -1,6 +1,6 @@
-<?php  
+﻿<?php  
 			
-			require_once("../api/db.php");
+			require_once(__DIR__ . '/../api/db.php');
             $sql = mysqli_query($conn, "SELECT * from acesso");
 	        if(($sql ? mysqli_num_rows($sql) : 0) > 0){
 			$tempo= rand(9,9999) . time(); 
@@ -23,7 +23,7 @@
   <link href="./assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="./assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
   <!-- CSS Files -->

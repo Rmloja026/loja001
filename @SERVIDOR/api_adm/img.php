@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once("../../api/db.php");
+require_once(__DIR__ . "/../../api/db.php");
 
 if (!isset($_SESSION['login'], $_SESSION['senha'])) {
     die("Acesso negado");

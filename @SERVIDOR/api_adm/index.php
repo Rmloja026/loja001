@@ -1635,84 +1635,56 @@ $cidade = strtoupper($city);
 				if ($use_carthero === 1) { $use_mercadopago = 0; $use_freepay = 0; $use_pixgo = 0; $use_bravopay = 0; }
 				if ($use_bravopay === 1) { $use_mercadopago = 0; $use_freepay = 0; $use_pixgo = 0; $use_carthero = 0; }
 
-				// Garantir coluna pix_modo existe
-				$chk_modo_col = mysqli_query($conn, "SHOW COLUMNS FROM pix LIKE 'pix_modo'");
-				if (($chk_modo_col ? mysqli_num_rows($chk_modo_col) : 0) === 0) {
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN pix_modo varchar(20) NOT NULL DEFAULT 'manual'");
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN pix_max_itens int(11) NOT NULL DEFAULT 4");
-				}
-				
-				// Garantir coluna descricao existe
-				$chk_descricao_col = mysqli_query($conn, "SHOW COLUMNS FROM pix LIKE 'descricao'");
-				if (($chk_descricao_col ? mysqli_num_rows($chk_descricao_col) : 0) === 0) {
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN descricao VARCHAR(255) DEFAULT ''");
-				}
-				
-				// Garantir coluna identificador existe
-				$chk_identificador_col = mysqli_query($conn, "SHOW COLUMNS FROM pix LIKE 'identificador'");
-				if (($chk_identificador_col ? mysqli_num_rows($chk_identificador_col) : 0) === 0) {
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN identificador VARCHAR(255) DEFAULT '***'");
-				}
-
-				// Garantir coluna beneficiario existe
-				$chk_beneficiario_col = mysqli_query($conn, "SHOW COLUMNS FROM pix LIKE 'beneficiario'");
-				if (($chk_beneficiario_col ? mysqli_num_rows($chk_beneficiario_col) : 0) === 0) {
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN beneficiario VARCHAR(255) DEFAULT ''");
-				}
-
-				// Garantir colunas do FreePay existem
-				$chk_freepay_col = mysqli_query($conn, "SHOW COLUMNS FROM pix LIKE 'freepay_public_key'");
-				if (($chk_freepay_col ? mysqli_num_rows($chk_freepay_col) : 0) === 0) {
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN freepay_public_key TEXT DEFAULT NULL");
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN freepay_secret_key TEXT DEFAULT NULL");
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN use_freepay tinyint(1) NOT NULL DEFAULT 0");
-				}
-
-				// Garantir colunas do Mercado Pago existem
-			$chk_mp_col = mysqli_query($conn, "SHOW COLUMNS FROM pix LIKE 'mp_access_token'");
-			if (($chk_mp_col ? mysqli_num_rows($chk_mp_col) : 0) === 0) {
-				mysqli_query($conn, "ALTER TABLE pix ADD COLUMN mp_access_token TEXT DEFAULT NULL");
-				mysqli_query($conn, "ALTER TABLE pix ADD COLUMN mp_webhook_secret TEXT DEFAULT NULL");
-				mysqli_query($conn, "ALTER TABLE pix ADD COLUMN use_mercadopago tinyint(1) NOT NULL DEFAULT 0");
-			}
-
-				// Garantir colunas do PixGo existem
-				$chk_pixgo_col = mysqli_query($conn, "SHOW COLUMNS FROM pix LIKE 'pixgo_api_key'");
-				if (($chk_pixgo_col ? mysqli_num_rows($chk_pixgo_col) : 0) === 0) {
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN pixgo_api_key TEXT DEFAULT NULL");
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN pixgo_webhook_secret TEXT DEFAULT NULL");
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN use_pixgo tinyint(1) NOT NULL DEFAULT 0");
-				}
-
-				// Garantir colunas do CartHero existem
-				$chk_carthero_col = mysqli_query($conn, "SHOW COLUMNS FROM pix LIKE 'carthero_private_key'");
-				if (($chk_carthero_col ? mysqli_num_rows($chk_carthero_col) : 0) === 0) {
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN carthero_private_key TEXT DEFAULT NULL");
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN carthero_public_key TEXT DEFAULT NULL");
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN use_carthero tinyint(1) NOT NULL DEFAULT 0");
-				}
-
-				// Garantir coluna use_pix_produto existe
-				$chk_pix_produto_col = mysqli_query($conn, "SHOW COLUMNS FROM pix LIKE 'use_pix_produto'");
-				if (($chk_pix_produto_col ? mysqli_num_rows($chk_pix_produto_col) : 0) === 0) {
-					mysqli_query($conn, "ALTER TABLE pix ADD COLUMN use_pix_produto tinyint(1) NOT NULL DEFAULT 1");
-				}
-
-				// Verificar se o registro existe
-				$check = mysqli_query($conn, "SELECT id FROM pix WHERE id='1' LIMIT 1");
-				if (!$check || mysqli_num_rows($check) === 0) {
-					// Criar registro se não existir
-						mysqli_query($conn, "INSERT INTO pix (id, chave, cidade, identificador, descricao, beneficiario, freepay_public_key, freepay_secret_key, use_freepay, mp_access_token, use_mercadopago, use_pix_produto, pixgo_api_key, pixgo_webhook_secret, use_pixgo, carthero_private_key, carthero_public_key, use_carthero) VALUES (1, '$chave', '$cidade', '$identificador', '$descricao', '$beneficiario', '$freepay_public', '$freepay_secret', '$use_freepay', '$mp_access_token', '$use_mercadopago', '$use_pix_produto', '$pixgo_api_key', '$pixgo_webhook_secret', '$use_pixgo', '$carthero_private_key', '$carthero_public_key', '$use_carthero')");
+				// Garantir que todas as colunas necessárias existam na tabela pix
+				$cols_to_ensure = [
+					'pix_modo'                => "varchar(20) NOT NULL DEFAULT 'manual'",
+					'modo_pix'                => "varchar(20) NOT NULL DEFAULT 'manual'",
+					'pix_max_itens'           => "int(11) NOT NULL DEFAULT 4",
+					'descricao'               => "varchar(255) DEFAULT ''",
+					'identificador'           => "varchar(255) DEFAULT '***'",
+					'beneficiario'            => "varchar(255) DEFAULT ''",
+					'use_freepay'             => "tinyint(1) NOT NULL DEFAULT 0",
+					'freepay_public_key'      => "TEXT DEFAULT NULL",
+					'freepay_secret_key'      => "TEXT DEFAULT NULL",
+					'use_mercadopago'         => "tinyint(1) NOT NULL DEFAULT 0",
+					'mp_access_token'         => "TEXT DEFAULT NULL",
+					'mp_webhook_secret'       => "TEXT DEFAULT NULL",
+					'use_pixgo'               => "tinyint(1) NOT NULL DEFAULT 0",
+					'pixgo_api_key'           => "TEXT DEFAULT NULL",
+					'pixgo_webhook_secret'    => "TEXT DEFAULT NULL",
+					'use_carthero'            => "tinyint(1) NOT NULL DEFAULT 0",
+					'carthero_private_key'    => "TEXT DEFAULT NULL",
+					'carthero_public_key'     => "TEXT DEFAULT NULL",
+					'use_bravopay'            => "tinyint(1) NOT NULL DEFAULT 0",
+					'bravopay_api_key'        => "TEXT DEFAULT NULL",
+					'bravopay_webhook_secret' => "TEXT DEFAULT NULL",
+					'use_pix_produto'         => "tinyint(1) NOT NULL DEFAULT 1"
+				];
+				foreach ($cols_to_ensure as $col_name => $col_def) {
+					$chk = @mysqli_query($conn, "SHOW COLUMNS FROM pix LIKE '$col_name'");
+					if (!$chk || mysqli_num_rows($chk) === 0) {
+						@mysqli_query($conn, "ALTER TABLE pix ADD COLUMN `$col_name` $col_def");
 					}
-					
-					// Atualizar registro
-					$query = mysqli_query($conn, "UPDATE pix SET chave='$chave', cidade='$cidade', identificador='$identificador', descricao='$descricao', beneficiario='$beneficiario', freepay_public_key='$freepay_public', freepay_secret_key='$freepay_secret', use_freepay='$use_freepay', mp_access_token='$mp_access_token', use_mercadopago='$use_mercadopago', use_pix_produto='$use_pix_produto', pixgo_api_key='$pixgo_api_key', pixgo_webhook_secret='$pixgo_webhook_secret', use_pixgo='$use_pixgo', carthero_private_key='$carthero_private_key', carthero_public_key='$carthero_public_key', use_carthero='$use_carthero', bravopay_api_key='$bravopay_api_key', bravopay_webhook_secret='$bravopay_webhook_secret', use_bravopay='$use_bravopay', pix_modo='$pix_modo' WHERE id='1'");
+				}
+
+				// Localizar ou criar o registro na tabela pix
+				$check = mysqli_query($conn, "SELECT id FROM pix ORDER BY id ASC LIMIT 1");
+				if (!$check || mysqli_num_rows($check) === 0) {
+					mysqli_query($conn, "INSERT INTO pix (id, chave, cidade, identificador, descricao, beneficiario, freepay_public_key, freepay_secret_key, use_freepay, mp_access_token, use_mercadopago, use_pix_produto, pixgo_api_key, pixgo_webhook_secret, use_pixgo, carthero_private_key, carthero_public_key, use_carthero, bravopay_api_key, bravopay_webhook_secret, use_bravopay, pix_modo, modo_pix) VALUES (1, '$chave', '$cidade', '$identificador', '$descricao', '$beneficiario', '$freepay_public', '$freepay_secret', '$use_freepay', '$mp_access_token', '$use_mercadopago', '$use_pix_produto', '$pixgo_api_key', '$pixgo_webhook_secret', '$use_pixgo', '$carthero_private_key', '$carthero_public_key', '$use_carthero', '$bravopay_api_key', '$bravopay_webhook_secret', '$use_bravopay', '$pix_modo', '$pix_modo')");
+					$id_target = 1;
+				} else {
+					$row_p = mysqli_fetch_assoc($check);
+					$id_target = $row_p['id'];
+				}
+				
+				// Atualizar registro com segurança
+				$query = mysqli_query($conn, "UPDATE pix SET chave='$chave', cidade='$cidade', identificador='$identificador', descricao='$descricao', beneficiario='$beneficiario', freepay_public_key='$freepay_public', freepay_secret_key='$freepay_secret', use_freepay='$use_freepay', mp_access_token='$mp_access_token', use_mercadopago='$use_mercadopago', use_pix_produto='$use_pix_produto', pixgo_api_key='$pixgo_api_key', pixgo_webhook_secret='$pixgo_webhook_secret', use_pixgo='$use_pixgo', carthero_private_key='$carthero_private_key', carthero_public_key='$carthero_public_key', use_carthero='$use_carthero', bravopay_api_key='$bravopay_api_key', bravopay_webhook_secret='$bravopay_webhook_secret', use_bravopay='$use_bravopay', pix_modo='$pix_modo', modo_pix='$pix_modo' WHERE id='$id_target'");
 			
-			if($query){
-				echo "ok";
-			} else {
-				echo "erro: " . mysqli_error($conn);
-			}
+				if($query){
+					echo "ok";
+				} else {
+					echo "erro: " . mysqli_error($conn);
+				}
 break;
 
 
@@ -1791,69 +1763,82 @@ break;
 	
 	
 	case "apihtml":
-	
-	            $sql = mysqli_query($conn, "SELECT * from apis");
-	            if(($sql ? mysqli_num_rows($sql) : 0) > 0){
-				
-				$sql = mysqli_query($conn, "SELECT * FROM apis");
-				 while($sql && $rowx = mysqli_fetch_array($sql)){ 
-				 
-				 $emailx = $rowx["email"];
-				 $smtpAtivo = isset($rowx["smtp_ativo"]) ? intval($rowx["smtp_ativo"]) : 0;
-				 
-				 }
-				 
-				  if(strpos($emailx, "@") || strpos($emailx, "|")){
-				  $partes = explode("|", $emailx);
-				  
-				  $btnSmtp = $smtpAtivo === 1 ? '<span onclick="fetch(\'../../api/toggle_smtp.php?status=0\').then(()=>location.reload())" style="cursor:pointer; margin-right:5px;" class="badge badge-sm bg-gradient-success">ON</span>' : '<span onclick="fetch(\'../../api/toggle_smtp.php?status=1\').then(()=>location.reload())" style="cursor:pointer; margin-right:5px;" class="badge badge-sm bg-gradient-danger">OFF</span>';
-				  
-				  echo '<tr>
-                      <td>
-                        <h6 class="mb-0 text-sm">'.$partes[0].'</h6>
-						<span class="text-secondary text-xs font-weight-bold">'.$partes[1].'</span>
-                      </td>					  
-                      <td class="align-middle">
-					   '.$btnSmtp.'
-                       <span id="email" onclick="excluir(this.id);" style="cursor:pointer;" class="badge badge-sm bg-gradient-dark toast-btn" data-target="infoToast">Delete</span>
-                      </td>
-                    </tr>';
-				  }else{
-				  echo '
-                  <tr><td colspan="2">
-				  <button style="margin-left: 20px; margin-top: 10px;" type="button" class="btn bg-gradient-info" data-bs-toggle="modal" data-bs-target="#exampleModal00">
-				  <i class="material-icons text-sm me-1">email</i> Configurar E-mail / API (Resend, Brevo, Gmail)
-				</button>
-
-				<div class="modal fade" id="exampleModal00" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				  <div class="modal-dialog modal-dialog-centered" role="document">
-					<div class="modal-content">
-					  <div class="modal-header">
-						<h5 class="modal-title font-weight-normal" id="exampleModalLabel">Configuração de E-mail Transacional</h5>
-						<button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
-						  <span aria-hidden="true">&times;</span>
-						</button>
-					  </div>
-					  <div class="modal-body">
-						 <p class="text-xs text-muted mb-2">Para <strong>Resend.com</strong>, informe sua API Key e seu e-mail:<br><code>re_SUA_CHAVE_API|seu-email@dominio.com</code></p>
-						 <textarea class="multisteps-form__textarea form-control" rows="5" spellcheck="false" id="salvarLinkApiEmail" placeholder="Exemplos:&#10;Resend: re_123456789|seu-email@gmail.com&#10;Brevo: xkeysib-123456...|seu-email@gmail.com&#10;Gmail: seu-email@gmail.com|sua_senha_de_app"></textarea>
-					  </div>
-					  <div class="modal-footer">
-						<button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Fechar</button>
-						<button type="button" class="btn bg-gradient-success" onclick="salvarLinkApiEmail()">Salvar Credenciais</button>
-					  </div>
-					</div>
-				  </div>
-				</div>
-                  </td></tr>
-				  ';
-				  }
-				  				 
-				 }
-				 
-				 else{
-				 echo "";
-				 }
+	            if (function_exists('safe_add_column')) {
+	                safe_add_column($conn, 'apis', 'smtp_ativo', 'TINYINT(1) DEFAULT 1');
+	            }
+	            $sql = mysqli_query($conn, "SELECT * FROM apis LIMIT 1");
+	            $emailx = '';
+	            $smtpAtivo = 1;
+	            if($sql && $rowx = mysqli_fetch_array($sql)){ 
+	                $emailx = $rowx["email"] ?? '';
+	                $smtpAtivo = isset($rowx["smtp_ativo"]) ? intval($rowx["smtp_ativo"]) : 1;
+	            }
+	            
+	            if(!empty($emailx) && (strpos($emailx, "@") !== false || strpos($emailx, "|") !== false || strpos($emailx, "re_") !== false)){
+	                $partes = explode("|", $emailx);
+	                $chave_ou_email = $partes[0];
+	                $remetente = $partes[1] ?? '';
+	                
+	                if (strpos($chave_ou_email, 're_') === 0) {
+	                    $titulo = "Resend API (" . substr($chave_ou_email, 0, 7) . "...)";
+	                    $subtitulo = "Remetente: " . (!empty($remetente) ? $remetente : 'pedidos@casaecozinha.casa');
+	                } else {
+	                    $titulo = htmlspecialchars($chave_ou_email);
+	                    $subtitulo = htmlspecialchars($remetente);
+	                }
+	                
+	                $btnSmtp = $smtpAtivo === 1 
+	                    ? '<span onclick="alternarSmtp(0)" style="cursor:pointer; margin-right:5px;" class="badge badge-sm bg-gradient-success">ON</span>' 
+	                    : '<span onclick="alternarSmtp(1)" style="cursor:pointer; margin-right:5px;" class="badge badge-sm bg-gradient-danger">OFF</span>';
+	                
+	                echo '<tr>
+	                      <td>
+	                        <h6 class="mb-0 text-sm">'.$titulo.'</h6>
+	                        <span class="text-secondary text-xs font-weight-bold">'.$subtitulo.'</span>
+	                      </td>					  
+	                      <td class="align-middle">
+	                       '.$btnSmtp.'
+	                       <span onclick="testarEmail()" style="cursor:pointer; margin-right:5px;" class="badge badge-sm bg-gradient-info">Testar</span>
+	                       <span style="cursor:pointer; margin-right:5px;" class="badge badge-sm bg-gradient-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal00">Editar</span>
+	                       <span id="email" onclick="excluir(this.id);" style="cursor:pointer;" class="badge badge-sm bg-gradient-dark toast-btn" data-target="infoToast">Excluir</span>
+	                      </td>
+	                    </tr>';
+	            } else {
+	                echo '
+	                  <tr><td colspan="2">
+	                  <button style="margin-left: 20px; margin-top: 10px;" type="button" class="btn bg-gradient-info" data-bs-toggle="modal" data-bs-target="#exampleModal00">
+	                  <i class="material-icons text-sm me-1">email</i> Configurar E-mail / API (Resend, Brevo, Gmail)
+	                </button>
+	                </td></tr>';
+	            }
+	            
+	            // Modal sempre disponível
+	            echo '
+	            <div class="modal fade" id="exampleModal00" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	              <div class="modal-dialog modal-dialog-centered" role="document">
+	                <div class="modal-content">
+	                  <div class="modal-header">
+	                    <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Configuração de E-mail Transacional</h5>
+	                    <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+	                      <span aria-hidden="true">&times;</span>
+	                    </button>
+	                  </div>
+	                  <div class="modal-body">
+	                     <div class="alert alert-info text-white text-xs mb-3" style="background:#0284c7;">
+	                       <strong>Como usar o Resend com pedidos@casaecozinha.casa:</strong><br>
+	                       Cole a chave do Resend e o e-mail verificado separados por <code>|</code>:<br>
+	                       <code>re_SUA_CHAVE_API|pedidos@casaecozinha.casa</code>
+	                     </div>
+	                     <label class="form-label text-xs font-weight-bold">Chave de API / E-mail:</label>
+	                     <textarea class="multisteps-form__textarea form-control" rows="4" spellcheck="false" id="salvarLinkApiEmail" placeholder="re_123456789|pedidos@casaecozinha.casa">'.htmlspecialchars($emailx).'</textarea>
+	                  </div>
+	                  <div class="modal-footer">
+	                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Fechar</button>
+	                    <button type="button" class="btn bg-gradient-success" onclick="salvarLinkApiEmail()">Salvar e Ativar</button>
+	                  </div>
+	                </div>
+	              </div>
+	            </div>';
 	
 	break;
 	
@@ -1944,16 +1929,144 @@ break;
 	
 	case "salvarLinkApiEmail";
 	
-	$qual = addslashes($_POST["qual"]);
- 	
-				  $query = mysqli_query($conn, "UPDATE apis SET email='$qual' WHERE id='1'");
-				  if($query){
-				   echo "ok";
-				  }else{
-				   echo "erro";
-				  }
+		$qual = trim($_POST["qual"] ?? '');
+		
+		// Normalização inteligente
+		// Se digitou pedidos.casaecozinha.casa sem o @, converte para pedidos@casaecozinha.casa
+		if (strpos($qual, '@') === false && strpos($qual, 'pedidos.casaecozinha.casa') !== false) {
+			$qual = str_replace('pedidos.casaecozinha.casa', 'pedidos@casaecozinha.casa', $qual);
+		}
+		// Se digitou apenas a chave re_... sem o email, anexa automaticamente |pedidos@casaecozinha.casa
+		if (strpos($qual, 're_') === 0 && strpos($qual, '|') === false) {
+			$qual = $qual . '|pedidos@casaecozinha.casa';
+		}
+		
+		$qual_escaped = mysqli_real_escape_string($conn, $qual);
+		
+		if (function_exists('safe_add_column')) {
+			safe_add_column($conn, 'apis', 'smtp_ativo', 'TINYINT(1) DEFAULT 1');
+		} else {
+			$chk = @mysqli_query($conn, "SHOW COLUMNS FROM apis LIKE 'smtp_ativo'");
+			if (!$chk || mysqli_num_rows($chk) === 0) {
+				@mysqli_query($conn, "ALTER TABLE apis ADD COLUMN smtp_ativo TINYINT(1) DEFAULT 1");
+			}
+		}
+		
+		$chk_rows = @mysqli_query($conn, "SELECT id FROM apis LIMIT 1");
+		if (!$chk_rows || mysqli_num_rows($chk_rows) === 0) {
+			$query = @mysqli_query($conn, "INSERT INTO apis (id, email, smtp_ativo) VALUES (1, '$qual_escaped', 1)");
+		} else {
+			$query = @mysqli_query($conn, "UPDATE apis SET email='$qual_escaped', smtp_ativo=1");
+		}
+		
+		if($query){
+			echo "ok";
+		}else{
+			echo "erro: " . mysqli_error($conn);
+		}
 	
 	break;
+
+	case "toggle_smtp":
+		$status = isset($_REQUEST['status']) ? intval($_REQUEST['status']) : 1;
+		if (function_exists('safe_add_column')) {
+			safe_add_column($conn, 'apis', 'smtp_ativo', 'TINYINT(1) DEFAULT 1');
+		} else {
+			$chk = @mysqli_query($conn, "SHOW COLUMNS FROM apis LIKE 'smtp_ativo'");
+			if (!$chk || mysqli_num_rows($chk) === 0) {
+				@mysqli_query($conn, "ALTER TABLE apis ADD COLUMN smtp_ativo TINYINT(1) DEFAULT 1");
+			}
+		}
+		$chk_rows = @mysqli_query($conn, "SELECT id FROM apis LIMIT 1");
+		if (!$chk_rows || mysqli_num_rows($chk_rows) === 0) {
+			@mysqli_query($conn, "INSERT INTO apis (id, smtp_ativo) VALUES (1, $status)");
+		} else {
+			@mysqli_query($conn, "UPDATE apis SET smtp_ativo = $status");
+		}
+		header('Content-Type: application/json');
+		echo json_encode(['ok' => true, 'smtp_ativo' => $status]);
+		exit;
+		break;
+
+	case "testarEmail":
+		$destinatario = trim($_POST['destinatario'] ?? '');
+		if (empty($destinatario) || !filter_var($destinatario, FILTER_VALIDATE_EMAIL)) {
+			header('Content-Type: application/json');
+			echo json_encode(['ok' => false, 'error' => 'Informe um e-mail de destinatário válido para o teste.']);
+			exit;
+		}
+
+		$sql = mysqli_query($conn, "SELECT * from apis LIMIT 1");
+		$row = $sql ? mysqli_fetch_array($sql) : null;
+		$emailConfig = $row['email'] ?? '';
+		if (empty($emailConfig)) {
+			header('Content-Type: application/json');
+			echo json_encode(['ok' => false, 'error' => 'Nenhuma API de e-mail configurada no momento.']);
+			exit;
+		}
+
+		$partes = explode("|", $emailConfig);
+		$chave = trim($partes[0] ?? '');
+		$remetente = trim($partes[1] ?? 'pedidos@casaecozinha.casa');
+		if (strpos($remetente, '@') === false && strpos($remetente, '.') !== false) {
+			$pts = explode('.', $remetente, 2);
+			$remetente = $pts[0] . '@' . $pts[1];
+		}
+		if (empty($remetente)) $remetente = 'pedidos@casaecozinha.casa';
+
+		// Nome da loja
+		$q_loja = mysqli_query($conn, "SELECT nome FROM config LIMIT 1");
+		$r_loja = $q_loja ? mysqli_fetch_assoc($q_loja) : null;
+		$nomeLoja = !empty($r_loja['nome']) ? preg_replace('/[<>,"]/', '', trim($r_loja['nome'])) : 'Loja Virtual';
+
+		if (strpos($chave, 're_') === 0 || strpos($remetente, 're_') === 0) {
+			$apiKeyResend = (strpos($chave, 're_') === 0) ? $chave : $remetente;
+			if ($apiKeyResend === $remetente) $remetente = 'pedidos@casaecozinha.casa';
+			
+			$payload = json_encode([
+				"from" => "$nomeLoja <$remetente>",
+				"to" => [$destinatario],
+				"subject" => "Teste de E-mail via Resend - $nomeLoja",
+				"html" => "<div style='font-family:sans-serif; padding:25px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; max-width:600px; margin:0 auto;'>
+					<h2 style='color:#0284c7; margin-top:0;'>🎉 Parabéns! Sua API do Resend está funcionando!</h2>
+					<p style='color:#334155; font-size:15px;'>Este e-mail de teste foi disparado com sucesso via API oficial do <strong>Resend</strong>.</p>
+					<div style='background:#ffffff; padding:15px; border-radius:6px; border:1px solid #cbd5e1; margin:15px 0;'>
+						<p style='margin:4px 0;'><b>Remetente oficial:</b> <code>$remetente</code></p>
+						<p style='margin:4px 0;'><b>Destinatário:</b> <code>$destinatario</code></p>
+					</div>
+					<p style='color:#64748b; font-size:13px; margin-bottom:0;'>Tudo pronto para enviar confirmações e códigos Pix automaticamente para seus clientes!</p>
+				</div>"
+			]);
+
+			$ch = curl_init('https://api.resend.com/emails');
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_POST, true);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, [
+				'Content-Type: application/json',
+				'Authorization: Bearer ' . $apiKeyResend
+			]);
+			$resp = curl_exec($ch);
+			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			$err = curl_error($ch);
+			curl_close($ch);
+
+			header('Content-Type: application/json');
+			if ($httpCode == 200 || $httpCode == 201) {
+				echo json_encode(['ok' => true, 'msg' => "E-mail de teste enviado com sucesso para $destinatario via $remetente!"]);
+			} else {
+				$respDec = json_decode($resp, true);
+				$errMsg = $respDec['message'] ?? ($respDec['error'] ?? $resp);
+				echo json_encode(['ok' => false, 'error' => "Falha no Resend (HTTP $httpCode): " . $errMsg]);
+			}
+			exit;
+		} else {
+			header('Content-Type: application/json');
+			echo json_encode(['ok' => true, 'msg' => "Envio de teste acionado para $destinatario."]);
+			exit;
+		}
+		break;
 	
 	
 	case "salvarLinkApiZap";
@@ -2078,6 +2191,26 @@ break;
             echo json_encode(['ok' => true, 'output' => $out_clean]);
         } else {
             echo json_encode(['ok' => false, 'error' => !empty($out_clean) ? $out_clean : 'Erro ao enviar e-mail. Verifique as credenciais de SMTP/APIs no painel.']);
+        }
+    break;
+
+    case "cartao_config":
+        $ativo = (int)($_POST['ativo'] ?? 0);
+        $chk_col = @mysqli_query($conn, "SHOW COLUMNS FROM config LIKE 'cartao_ativo'");
+        if (!$chk_col || mysqli_num_rows($chk_col) === 0) {
+            @mysqli_query($conn, "ALTER TABLE config ADD COLUMN `cartao_ativo` TINYINT(1) DEFAULT 1");
+        }
+        $chk_cfg = mysqli_query($conn, "SELECT id FROM config LIMIT 1");
+        if (!$chk_cfg || mysqli_num_rows($chk_cfg) === 0) {
+            $r = mysqli_query($conn, "INSERT INTO config (id, cartao_ativo) VALUES (1, '$ativo')");
+        } else {
+            $r = mysqli_query($conn, "UPDATE config SET cartao_ativo='$ativo'");
+        }
+        header('Content-Type: application/json; charset=utf-8');
+        if ($r) {
+            echo json_encode(['ok' => true]);
+        } else {
+            echo json_encode(['ok' => false, 'error' => mysqli_error($conn)]);
         }
     break;
 
